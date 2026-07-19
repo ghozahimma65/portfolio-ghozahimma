@@ -6,11 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreExperienceRequest;
 use App\Http\Requests\Admin\UpdateExperienceRequest;
 use App\Models\Experience;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ExperienceController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     public function index(Request $request)
     {
         $query = Experience::query();
@@ -41,7 +47,7 @@ class ExperienceController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('experiences', 'public');
+            $path = $this->cloudinary->upload($request->file('logo'), 'experiences');
             $validated['logo'] = $path;
         }
 
@@ -66,9 +72,9 @@ class ExperienceController extends Controller
 
         if ($request->hasFile('logo')) {
             if ($experience->logo) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $experience->logo));
+                $this->cloudinary->delete($experience->logo);
             }
-            $path = $request->file('logo')->store('experiences', 'public');
+            $path = $this->cloudinary->upload($request->file('logo'), 'experiences');
             $validated['logo'] = $path;
         }
 
@@ -85,7 +91,7 @@ class ExperienceController extends Controller
     public function destroy(Experience $experience)
     {
         if ($experience->logo) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $experience->logo));
+            $this->cloudinary->delete($experience->logo);
         }
         $experience->delete();
 

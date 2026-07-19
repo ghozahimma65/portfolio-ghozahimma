@@ -17,14 +17,14 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="@yield('title', $globalSettings['seo_meta_title'])">
     <meta property="og:description" content="@yield('meta_description', $globalSettings['seo_meta_description'])">
-    <meta property="og:image" content="{{ asset($globalSettings['seo_og_image']) }}">
+    <meta property="og:image" content="{{ $globalSettings['seo_og_image'] && str_starts_with($globalSettings['seo_og_image'], 'http') ? $globalSettings['seo_og_image'] : asset($globalSettings['seo_og_image']) }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="{{ $globalSettings['seo_twitter_card'] }}">
     <meta property="twitter:url" content="{{ url()->current() }}">
     <meta property="twitter:title" content="@yield('title', $globalSettings['seo_meta_title'])">
     <meta property="twitter:description" content="@yield('meta_description', $globalSettings['seo_meta_description'])">
-    <meta property="twitter:image" content="{{ asset($globalSettings['seo_og_image']) }}">
+    <meta property="twitter:image" content="{{ $globalSettings['seo_og_image'] && str_starts_with($globalSettings['seo_og_image'], 'http') ? $globalSettings['seo_og_image'] : asset($globalSettings['seo_og_image']) }}">
 
     <!-- JSON-LD Person Schema for Search Engines -->
     <script type="application/ld+json">

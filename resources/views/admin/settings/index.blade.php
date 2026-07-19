@@ -70,7 +70,7 @@
                             <label for="about_photo" class="form-label text-secondary small fw-bold">Profile Photo</label>
                             @if($settings['about_photo'])
                                 <div class="mb-2">
-                                    <img src="{{ asset($settings['about_photo']) }}" alt="" style="max-height: 80px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 50%;">
+                                    <img src="{{ $settings['about_photo'] && str_starts_with($settings['about_photo'], 'http') ? $settings['about_photo'] : asset($settings['about_photo']) }}" alt="" style="max-height: 80px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 50%;">
                                 </div>
                             @endif
                             <input type="file" id="about_photo" name="about_photo" class="form-control form-control-admin w-100" accept="image/*">
@@ -79,7 +79,7 @@
                             <label for="about_resume" class="form-label text-secondary small fw-bold">Resume PDF File</label>
                             @if($settings['about_resume'])
                                 <div class="mb-2">
-                                    <a href="{{ asset($settings['about_resume']) }}" target="_blank" class="small text-primary"><i class="bi bi-file-pdf"></i> View Current Resume Document &rarr;</a>
+                                    <a href="{{ $settings['about_resume'] && str_starts_with($settings['about_resume'], 'http') ? $settings['about_resume'] : asset($settings['about_resume']) }}" target="_blank" class="small text-primary"><i class="bi bi-file-pdf"></i> View Current Resume Document &rarr;</a>
                                 </div>
                             @endif
                             <input type="file" id="about_resume" name="about_resume" class="form-control form-control-admin w-100" accept="application/pdf">

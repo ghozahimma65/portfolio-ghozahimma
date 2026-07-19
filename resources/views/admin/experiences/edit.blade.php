@@ -124,7 +124,7 @@
                     @if($experience->logo)
                         <div class="mb-3 text-center">
                             <span class="text-secondary small d-block text-start mb-2">Current Logo</span>
-                            <img src="{{ asset($experience->logo) }}" alt="" style="max-height: 80px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; background: #ffffff;">
+                            <img src="{{ $experience->logo && str_starts_with($experience->logo, 'http') ? $experience->logo : asset($experience->logo) }}" alt="" style="max-height: 80px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; background: #ffffff;">
                         </div>
                     @endif
 

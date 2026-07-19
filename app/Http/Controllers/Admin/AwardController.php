@@ -4,11 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Award;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AwardController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     public function index()
     {
         $awards = Award::orderBy('order')->get();
@@ -32,7 +38,7 @@ class AwardController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('awards', 'public');
+            $path = $this->cloudinary->upload($request->file('image'), 'awards');
             $validated['image_path'] = $path;
         }
 
@@ -60,9 +66,9 @@ class AwardController extends Controller
 
         if ($request->hasFile('image')) {
             if ($award->image_path) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $award->image_path));
+                $this->cloudinary->delete($award->image_path);
             }
-            $path = $request->file('image')->store('awards', 'public');
+            $path = $this->cloudinary->upload($request->file('image'), 'awards');
             $validated['image_path'] = $path;
         }
 
@@ -74,7 +80,7 @@ class AwardController extends Controller
     public function destroy(Award $award)
     {
         if ($award->image_path) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $award->image_path));
+            $this->cloudinary->delete($award->image_path);
         }
         $award->delete();
 

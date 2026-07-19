@@ -59,7 +59,7 @@
                 @if($certificate->image_path)
                     <div class="col-12 text-center my-2">
                         <span class="text-secondary small d-block text-start mb-2">Current Image Preview</span>
-                        <img src="{{ asset($certificate->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px;">
+                        <img src="{{ $certificate->image_path && str_starts_with($certificate->image_path, 'http') ? $certificate->image_path : asset($certificate->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px;">
                     </div>
                 @endif
 

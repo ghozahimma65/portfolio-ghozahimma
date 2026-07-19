@@ -174,7 +174,7 @@
                     @if($project->image_path)
                         <div class="mb-3 text-center">
                             <span class="text-secondary small d-block text-start mb-2">Current Thumbnail</span>
-                            <img src="{{ asset($project->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px; background: rgba(0,0,0,0.2);">
+                            <img src="{{ $project->image_path && str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px; background: rgba(0,0,0,0.2);">
                         </div>
                     @endif
 

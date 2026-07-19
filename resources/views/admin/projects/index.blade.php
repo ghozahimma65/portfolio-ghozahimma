@@ -62,7 +62,7 @@
                             <td class="fw-bold text-secondary">#{{ $project->order }}</td>
                             <td>
                                 @if($project->image_path)
-                                    <img src="{{ asset($project->image_path) }}" alt="" style="width: 64px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
+                                    <img src="{{ $project->image_path && str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path) }}" alt="" style="width: 64px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
                                 @else
                                     <div class="small text-muted" style="width: 64px; height: 36px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; border-radius: 4px;">N/A</div>
                                 @endif

@@ -6,11 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Models\Project;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     /**
      * Display a listing of projects.
      */
@@ -63,14 +69,14 @@ class ProjectController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('thumbnail')) {
-            $path = $request->file('thumbnail')->store('projects/thumbnails', 'public');
+            $path = $this->cloudinary->upload($request->file('thumbnail'), 'projects/thumbnails');
             $validated['image_path'] = $path;
         }
 
         $galleryPaths = [];
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
-                $path = $file->store('projects/gallery', 'public');
+                $path = $this->cloudinary->upload($file, 'projects/gallery');
                 $galleryPaths[] = $path;
             }
             $validated['gallery_images'] = $galleryPaths;
@@ -104,21 +110,21 @@ class ProjectController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             if ($project->image_path) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $project->image_path));
+                $this->cloudinary->delete($project->image_path);
             }
-            $path = $request->file('thumbnail')->store('projects/thumbnails', 'public');
+            $path = $this->cloudinary->upload($request->file('thumbnail'), 'projects/thumbnails');
             $validated['image_path'] = $path;
         }
 
         if ($request->hasFile('gallery')) {
             if ($project->gallery_images) {
                 foreach ($project->gallery_images as $oldImage) {
-                    Storage::disk('public')->delete(str_replace('storage/', '', $oldImage));
+                    $this->cloudinary->delete($oldImage);
                 }
             }
             $galleryPaths = [];
             foreach ($request->file('gallery') as $file) {
-                $path = $file->store('projects/gallery', 'public');
+                $path = $this->cloudinary->upload($file, 'projects/gallery');
                 $galleryPaths[] = $path;
             }
             $validated['gallery_images'] = $galleryPaths;

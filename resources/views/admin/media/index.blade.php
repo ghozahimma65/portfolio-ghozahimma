@@ -63,7 +63,7 @@
                             <!-- Thumbnail area -->
                             <div class="d-flex align-items-center justify-content-center bg-dark" style="aspect-ratio: 4/3; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03);">
                                 @if($isImage)
-                                    <img src="{{ asset($media->filepath) }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <img src="{{ $media->filepath && str_starts_with($media->filepath, 'http') ? $media->filepath : asset($media->filepath) }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                                 @elseif(str_contains($media->file_type, 'pdf'))
                                     <i class="bi bi-file-pdf text-danger fs-1"></i>
                                 @elseif(str_contains($media->file_type, 'zip'))
@@ -81,7 +81,7 @@
 
                             <!-- Actions footer panel -->
                             <div class="d-flex gap-1 mt-2">
-                                <button type="button" class="btn-admin btn-admin-secondary btn-sm flex-grow-1 copy-path-btn" data-url="{{ asset($media->filepath) }}" style="font-size: 0.7rem; padding: 4px 8px;">
+                                <button type="button" class="btn-admin btn-admin-secondary btn-sm flex-grow-1 copy-path-btn" data-url="{{ $media->filepath && str_starts_with($media->filepath, 'http') ? $media->filepath : asset($media->filepath) }}" style="font-size: 0.7rem; padding: 4px 8px;">
                                     <i class="bi bi-link-45deg"></i> Copy URL
                                 </button>
                                 <form action="{{ route('admin.media.destroy', $media->id) }}" method="POST" onsubmit="return confirm('Delete this media asset permanently?');" class="m-0">

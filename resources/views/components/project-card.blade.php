@@ -5,7 +5,7 @@
         <!-- Project Screenshot (Hero of the Card) -->
         <div class="project-card-image-wrap shadow-sm">
             @if(!empty($project->image_path))
-                <img src="{{ asset($project->image_path) }}" alt="{{ $project->title }} preview image" loading="lazy">
+                <img src="{{ str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path) }}" alt="{{ $project->title }} preview image" loading="lazy">
             @else
                 <img src="{{ asset('assets/images/project-placeholder.png') }}" alt="{{ $project->title }} placeholder preview" loading="lazy">
             @endif
@@ -67,7 +67,7 @@
                         data-problem="{{ $project->problem ?? '' }}"
                         data-solution="{{ $project->solution ?? '' }}"
                         data-result="{{ $project->result ?? '' }}"
-                        data-img="{{ asset($project->image_path ?? 'assets/images/project-placeholder.png') }}"
+                        data-img="{{ $project->image_path && str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path ?? 'assets/images/project-placeholder.png') }}"
                         data-github="{{ $project->github_url ?? '#' }}"
                         data-demo="{{ $project->demo_url ?? '#' }}"
                         data-tech="{{ json_encode($project->tech_stack) }}"

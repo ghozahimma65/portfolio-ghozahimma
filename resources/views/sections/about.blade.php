@@ -14,7 +14,7 @@
                     <!-- Photo Frame -->
                     <div class="profile-img-container shadow-sm mb-4">
                         <div class="profile-img-frame">
-                            <img src="{{ asset($globalSettings['about_photo']) }}" alt="Ghoza Himma Portrait" loading="lazy">
+                            <img src="{{ $globalSettings['about_photo'] && str_starts_with($globalSettings['about_photo'], 'http') ? $globalSettings['about_photo'] : asset($globalSettings['about_photo']) }}" alt="Ghoza Himma Portrait" loading="lazy">
                         </div>
                     </div>
 

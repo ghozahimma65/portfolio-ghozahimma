@@ -15,7 +15,7 @@
                         <!-- Thumbnail Image Frame -->
                         <div class="cert-image-wrap shadow-sm">
                             @if(!empty($certificate->image_path))
-                                <img src="{{ asset($certificate->image_path) }}" alt="{{ $certificate->title }} certificate document" loading="lazy">
+                                <img src="{{ str_starts_with($certificate->image_path, 'http') ? $certificate->image_path : asset($certificate->image_path) }}" alt="{{ $certificate->title }} certificate document" loading="lazy">
                             @else
                                 <img src="{{ asset('assets/images/cert-placeholder.png') }}" alt="{{ $certificate->title }} placeholder preview" loading="lazy">
                             @endif

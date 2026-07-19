@@ -4,11 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     /**
      * Display settings form panel.
      */
@@ -76,9 +82,9 @@ class SettingsController extends Controller
         if ($request->hasFile('about_photo')) {
             $oldPhoto = Setting::get('about_photo');
             if ($oldPhoto) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $oldPhoto));
+                $this->cloudinary->delete($oldPhoto);
             }
-            $path = $request->file('about_photo')->store('settings', 'public');
+            $path = $this->cloudinary->upload($request->file('about_photo'), 'settings');
             Setting::set('about_photo', $path);
         }
 
@@ -86,9 +92,9 @@ class SettingsController extends Controller
         if ($request->hasFile('about_resume')) {
             $oldResume = Setting::get('about_resume');
             if ($oldResume) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $oldResume));
+                $this->cloudinary->delete($oldResume);
             }
-            $path = $request->file('about_resume')->store('settings', 'public');
+            $path = $this->cloudinary->upload($request->file('about_resume'), 'settings');
             Setting::set('about_resume', $path);
         }
 

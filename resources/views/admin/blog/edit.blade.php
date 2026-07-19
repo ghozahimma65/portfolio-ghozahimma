@@ -99,7 +99,7 @@
                     @if($post->image_path)
                         <div class="mb-3 text-center">
                             <span class="text-secondary small d-block text-start mb-2">Current Cover Image</span>
-                            <img src="{{ asset($post->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px;">
+                            <img src="{{ $post->image_path && str_starts_with($post->image_path, 'http') ? $post->image_path : asset($post->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px;">
                         </div>
                     @endif
 

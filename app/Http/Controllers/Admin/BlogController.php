@@ -8,12 +8,18 @@ use App\Http\Requests\Admin\UpdateBlogPostRequest;
 use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\BlogTag;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     public function index(Request $request)
     {
         $query = BlogPost::query()->with('category');
@@ -55,15 +61,12 @@ class BlogController extends Controller
         return view('admin.blog.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created post in storage.
-     */
     public function store(StoreBlogPostRequest $request)
     {
         $validated = $request->validated();
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('blog', 'public');
+            $path = $this->cloudinary->upload($request->file('image'), 'blog');
             $validated['image_path'] = $path;
         }
 
@@ -125,9 +128,9 @@ class BlogController extends Controller
 
         if ($request->hasFile('image')) {
             if ($post->image_path) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $post->image_path));
+                $this->cloudinary->delete($post->image_path);
             }
-            $path = $request->file('image')->store('blog', 'public');
+            $path = $this->cloudinary->upload($request->file('image'), 'blog');
             $validated['image_path'] = $path;
         }
 
@@ -175,7 +178,7 @@ class BlogController extends Controller
     public function destroy(BlogPost $blog_post)
     {
         if ($blog_post->image_path) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $blog_post->image_path));
+            $this->cloudinary->delete($blog_post->image_path);
         }
         $blog_post->delete();
 

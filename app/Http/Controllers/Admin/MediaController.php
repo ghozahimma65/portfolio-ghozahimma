@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MediaController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     /**
      * Display media library files grid.
      */
@@ -26,9 +32,6 @@ class MediaController extends Controller
         return view('admin.media.index', compact('mediaFiles'));
     }
 
-    /**
-     * Upload a new media asset.
-     */
     public function upload(Request $request)
     {
         $request->validate([
@@ -44,21 +47,14 @@ class MediaController extends Controller
         $file        = $request->file('file');
         $originalName = $file->getClientOriginalName();
 
-        // Clean filename using original name (without extension)
-        $cleanName = pathinfo($originalName, PATHINFO_FILENAME);
-
-        // Use server-side extension detection — never trust client-provided extension
-        $extension = $file->guessExtension() ?? $file->getClientOriginalExtension();
-        $filename  = Str::slug($cleanName) . '_' . time() . '.' . $extension;
-
-        // Store file in the public disk uploads directory
-        $path = $file->storeAs('uploads', $filename, 'public');
+        // Upload to Cloudinary
+        $path = $this->cloudinary->upload($file, 'uploads');
 
         // Register file metadata in the media library database
         Media::create([
             'filename'  => $originalName,
             'filepath'  => $path,
-            'file_type' => $file->getMimeType(), // Use server-detected MIME, not client-provided
+            'file_type' => $file->getMimeType(), // Use server-detected MIME
             'file_size' => $file->getSize(),
         ]);
 
@@ -70,11 +66,8 @@ class MediaController extends Controller
      */
     public function destroy(Media $medium)
     {
-        // Delete physical file
-        $diskPath = str_replace('storage/', '', $medium->filepath);
-        if (Storage::disk('public')->exists($diskPath)) {
-            Storage::disk('public')->delete($diskPath);
-        }
+        // Delete from Cloudinary
+        $this->cloudinary->delete($medium->filepath);
 
         // Delete database record
         $medium->delete();

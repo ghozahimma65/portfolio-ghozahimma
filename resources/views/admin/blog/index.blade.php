@@ -59,7 +59,7 @@
                                 <tr>
                                     <td>
                                         @if($post->image_path)
-                                            <img src="{{ asset($post->image_path) }}" alt="" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
+                                            <img src="{{ $post->image_path && str_starts_with($post->image_path, 'http') ? $post->image_path : asset($post->image_path) }}" alt="" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
                                         @else
                                             <div class="small text-muted" style="width: 80px; height: 45px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; border-radius: 4px;"><i class="bi bi-file-text"></i></div>
                                         @endif

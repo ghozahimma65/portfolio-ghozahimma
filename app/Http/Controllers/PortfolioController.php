@@ -81,8 +81,7 @@ class PortfolioController extends Controller
     public function downloadCv()
     {
         $resumePath = Setting::get('about_resume');
-        $cleanPath = $resumePath ? str_replace('storage/', '', $resumePath) : null;
-
+        
         // Track CV Download Event
         try {
             AnalyticsLog::create([
@@ -94,6 +93,12 @@ class PortfolioController extends Controller
         } catch (\Exception $e) {
             Log::warning('Analytics log CV download failed: ' . $e->getMessage());
         }
+
+        if ($resumePath && (str_starts_with($resumePath, 'http://') || str_starts_with($resumePath, 'https://'))) {
+            return redirect()->away($resumePath);
+        }
+
+        $cleanPath = $resumePath ? str_replace('storage/', '', $resumePath) : null;
 
         if ($cleanPath && Storage::disk('public')->exists($cleanPath)) {
             return Storage::disk('public')->download($cleanPath, 'Resume-Ghoza-Himma.pdf');

@@ -52,7 +52,7 @@
                             <td class="fw-bold text-secondary">#{{ $exp->order }}</td>
                             <td>
                                 @if($exp->logo)
-                                    <img src="{{ asset($exp->logo) }}" alt="" style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff; padding: 4px;">
+                                    <img src="{{ $exp->logo && str_starts_with($exp->logo, 'http') ? $exp->logo : asset($exp->logo) }}" alt="" style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff; padding: 4px;">
                                 @else
                                     <div class="small text-muted" style="width: 48px; height: 48px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; border-radius: 6px;"><i class="bi bi-briefcase"></i></div>
                                 @endif

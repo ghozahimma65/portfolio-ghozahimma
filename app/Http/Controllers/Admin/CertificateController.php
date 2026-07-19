@@ -4,11 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CertificateController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
     public function index(Request $request)
     {
         $query = Certificate::query();
@@ -48,7 +54,7 @@ class CertificateController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('certificates', 'public');
+            $path = $this->cloudinary->upload($request->file('image'), 'certificates');
             $validated['image_path'] = $path;
         }
 
@@ -80,9 +86,9 @@ class CertificateController extends Controller
 
         if ($request->hasFile('image')) {
             if ($certificate->image_path) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $certificate->image_path));
+                $this->cloudinary->delete($certificate->image_path);
             }
-            $path = $request->file('image')->store('certificates', 'public');
+            $path = $this->cloudinary->upload($request->file('image'), 'certificates');
             $validated['image_path'] = $path;
         }
 
@@ -96,7 +102,7 @@ class CertificateController extends Controller
     public function destroy(Certificate $certificate)
     {
         if ($certificate->image_path) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $certificate->image_path));
+            $this->cloudinary->delete($certificate->image_path);
         }
         $certificate->delete();
 

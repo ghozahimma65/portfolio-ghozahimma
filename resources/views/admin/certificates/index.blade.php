@@ -53,7 +53,7 @@
                             <td class="fw-bold text-secondary">#{{ $cert->order }}</td>
                             <td>
                                 @if($cert->image_path)
-                                    <img src="{{ asset($cert->image_path) }}" alt="" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
+                                    <img src="{{ $cert->image_path && str_starts_with($cert->image_path, 'http') ? $cert->image_path : asset($cert->image_path) }}" alt="" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
                                 @else
                                     <div class="small text-muted" style="width: 80px; height: 45px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; border-radius: 4px;"><i class="bi bi-award"></i></div>
                                 @endif

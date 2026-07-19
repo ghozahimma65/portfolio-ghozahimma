@@ -49,7 +49,7 @@
                 @if($award->image_path)
                     <div class="col-12 text-center my-2">
                         <span class="text-secondary small d-block text-start mb-2">Current Award Image</span>
-                        <img src="{{ asset($award->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px;">
+                        <img src="{{ $award->image_path && str_starts_with($award->image_path, 'http') ? $award->image_path : asset($award->image_path) }}" alt="" style="max-height: 120px; object-fit: contain; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px;">
                     </div>
                 @endif
 
