@@ -1,0 +1,74 @@
+@extends('admin.layouts.admin')
+
+@section('title', 'Add Skill')
+
+@section('content')
+<div class="container-fluid px-0">
+    <div class="mb-4">
+        <a href="{{ route('admin.skills.index') }}" class="text-primary text-decoration-none small">&larr; Back to Skills</a>
+        <h1 class="fw-bold mb-1 mt-2" style="font-family: var(--font-heading); font-size: 1.75rem; letter-spacing: -0.03em;">Add Skill</h1>
+        <p class="text-secondary small mb-0">Insert core stack technology.</p>
+    </div>
+
+    @if ($errors->any())
+        <div class="alert alert-danger border-0 small mb-4 py-2" style="background-color: rgba(239, 68, 68, 0.1); color: var(--status-danger);">
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="glass-panel p-4" style="max-width: 600px;">
+        <form action="{{ route('admin.skills.store') }}" method="POST">
+            @csrf
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label text-secondary small fw-bold">Skill Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-control-admin w-100" placeholder="e.g. PHP / Laravel" value="{{ old('name') }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="category" class="form-label text-secondary small fw-bold">Category</label>
+                    <select name="category" id="category" class="form-select form-control-admin" required>
+                        <option value="Backend">Backend</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Mobile">Mobile</option>
+                        <option value="Database">Database</option>
+                        <option value="API">API</option>
+                        <option value="IoT">IoT</option>
+                        <option value="Tools">Tools</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="icon" class="form-label text-secondary small fw-bold">Bootstrap Icon Class</label>
+                    <input type="text" id="icon" name="icon" class="form-control form-control-admin w-100" placeholder="e.g. bi bi-server" value="{{ old('icon') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="level" class="form-label text-secondary small fw-bold">Skill Level</label>
+                    <select name="level" id="level" class="form-select form-control-admin" required>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate" selected>Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Expert">Expert</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="order" class="form-label text-secondary small fw-bold">Display Order</label>
+                    <input type="number" id="order" name="order" class="form-control form-control-admin w-100" value="0" required>
+                </div>
+
+                <div class="col-12 mt-4 d-flex gap-2">
+                    <button type="submit" class="btn-admin btn-admin-primary flex-grow-1 justify-content-center">Create Skill</button>
+                    <a href="{{ route('admin.skills.index') }}" class="btn-admin btn-admin-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
