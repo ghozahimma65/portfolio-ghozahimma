@@ -32,8 +32,8 @@
     <script type="application/ld+json">
     [
         {
-            "@context": "https://schema.org",
-            "@type": "Person",
+            "@@context": "https://schema.org",
+            "@@type": "Person",
             "name": "Ghoza Himma Al Farizqi",
             "jobTitle": "{{ $globalSettings['about_headline'] ?: 'Software Developer' }}",
             "description": "{{ $globalSettings['seo_meta_description'] }}",
@@ -44,8 +44,8 @@
             ]
         },
         {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
+            "@@context": "https://schema.org",
+            "@@type": "WebSite",
             "name": "Ghoza Himma Portfolio",
             "url": "{{ url('/') }}"
         }
