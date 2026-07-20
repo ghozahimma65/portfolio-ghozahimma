@@ -1245,19 +1245,85 @@ label.form-label {
     border: none;
 }
 
-/* Responsive adjustments */
-@media (max-width: 991.98px) {
+/* Pulse Glow Animation for Timeline Markers */
+@keyframes pulse-marker {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+.timeline-item:first-child .timeline-marker {
+    animation: pulse-marker 2.5s infinite;
+}
+
+/* Custom Bullet List Styling for Experience & Details */
+.resp-list-custom li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.resp-list-custom li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+}
+
+/* Smooth Focus visible outline for accessibility (a11y) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25) !important;
+}
+
+/* Comprehensive Responsive Breakpoints (320px, 480px, 768px, 1024px, 1440px+) */
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1240px;
+    }
+    .hero-title {
+        font-size: 3.75rem;
+    }
+}
+
+@media (max-width: 1024px) {
     section {
-        padding: 80px 0;
+        padding: 85px 0;
     }
     .hero-section {
-        padding: 140px 0 80px 0;
+        padding: 150px 0 85px 0;
     }
-    h1 {
-        font-size: 2.75rem;
+    .hero-title {
+        font-size: 3rem;
     }
-    h2 {
-        font-size: 1.8rem;
+}
+
+@media (max-width: 991.98px) {
+    section {
+        padding: 75px 0;
+    }
+    .hero-section {
+        padding: 130px 0 70px 0;
+        min-height: auto;
+    }
+    .hero-title {
+        font-size: 2.6rem;
+    }
+    .hero-tagline {
+        font-size: 1.2rem;
     }
     .border-start-lg {
         border-left: none !important;
@@ -1265,12 +1331,35 @@ label.form-label {
         padding-top: 2.5rem;
         margin-top: 1.5rem;
     }
-    .hero-illustration-container {
-        margin-top: 2rem;
+    .code-terminal {
+        margin-top: 1.5rem;
     }
 }
 
 @media (max-width: 767.98px) {
+    section {
+        padding: 65px 0;
+    }
+    .section-header {
+        margin-bottom: 40px;
+    }
+    .hero-title {
+        font-size: 2.25rem;
+    }
+    .hero-stats-row {
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+    }
+    .hero-stat-number {
+        font-size: 1.75rem;
+    }
+    .hero-stat-label {
+        font-size: 0.65rem;
+    }
+    .filter-btn-group {
+        width: 100%;
+        justify-content: center;
+    }
     .border-end-md {
         border-right: none !important;
         border-bottom: 1px solid var(--border-color);
@@ -1280,17 +1369,112 @@ label.form-label {
 }
 
 @media (max-width: 575.98px) {
+    section {
+        padding: 55px 0;
+    }
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .hero-section {
+        padding: 115px 0 55px 0;
+    }
     .hero-title {
-        font-size: 2.25rem;
+        font-size: 1.95rem;
+        line-height: 1.2;
     }
     .hero-tagline {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
+    }
+    .hero-stat-number {
+        font-size: 1.5rem;
+    }
+    .hero-stat-label {
+        font-size: 0.6rem;
+        letter-spacing: 0.04em;
+    }
+    .card-custom {
+        padding: 1.35rem;
+        border-radius: var(--radius-lg);
+    }
+    .skills-column {
+        padding: 1.35rem;
+        border-radius: var(--radius-lg);
+    }
+    .btn-custom {
+        padding: 9px 16px;
+        font-size: 0.775rem;
+        width: 100%;
     }
     .footer-link-group {
         flex-wrap: wrap;
-        gap: 12px 18px;
+        gap: 10px 16px;
     }
-    .card-custom {
-        padding: 1.75rem;
+    .modal-body-custom {
+        padding: 1.25rem;
+    }
+    .modal-header-custom,
+    .modal-footer-custom {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* Extra Compact Devices (320px–380px) */
+@media (max-width: 380px) {
+    .hero-title {
+        font-size: 1.75rem;
+    }
+    .hero-subtitle {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+    }
+    .skill-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+    }
+}
+
+/* Production Print Optimization (@media print) */
+@media print {
+    .navbar-custom,
+    .back-to-top-btn,
+    .loader-wrapper,
+    .scroll-indicator,
+    #theme-toggle,
+    .footer-minimal {
+        display: none !important;
+    }
+
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+    }
+
+    section {
+        padding: 20px 0 !important;
+        page-break-inside: avoid;
+        border-bottom: 1px solid #ccc !important;
+    }
+
+    .card-custom,
+    .skills-column,
+    .code-terminal {
+        background-color: #ffffff !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        color: #000000 !important;
+    }
+
+    .text-gradient,
+    .text-gradient-accent {
+        background: none !important;
+        -webkit-text-fill-color: #000000 !important;
+        color: #000000 !important;
+    }
+
+    a {
+        text-decoration: underline !important;
+        color: #000000 !important;
     }
 }

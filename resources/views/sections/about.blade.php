@@ -50,7 +50,7 @@
                 </div>
 
                 <!-- Academic Timeline -->
-                <div>
+                <div class="mb-5">
                     <h3 class="fw-bold mb-4 text-gradient" style="font-size: 1.25rem;"><i class="bi bi-mortarboard text-primary" aria-hidden="true"></i> Education Journey</h3>
                     
                     <div class="timeline">
@@ -61,22 +61,62 @@
                                 <h4 class="timeline-title">{{ $edu->degree }} {{ $edu->major ? 'in ' . $edu->major : '' }}</h4>
                                 <p class="timeline-subtitle mb-2">{{ $edu->school }}</p>
                                 @if($edu->description)
-                                    <p class="timeline-desc" style="white-space: pre-wrap;">{{ $edu->description }}</p>
+                                    <p class="timeline-desc mb-0" style="white-space: pre-wrap;">{{ $edu->description }}</p>
                                 @endif
                             </div>
                         @empty
                             <div class="timeline-item">
                                 <div class="timeline-marker"></div>
-                                <span class="timeline-year">2021 — 2024</span>
-                                <h4 class="timeline-title">D3 Manajemen Informatika</h4>
-                                <p class="timeline-subtitle mb-2">Politeknik Negeri Jember</p>
-                                <p class="timeline-desc">
-                                    Mempelajari rekayasa perangkat lunak dasar, struktur data, basis data relasional, pemrograman berorientasi objek (OOP), perancangan sistem informasi, dan UI/UX design. Fokus tugas akhir dan proyek praktis mencakup implementasi full-stack web, mobile integration, dan Internet of Things (IoT).
-                                </p>
+                                <p class="text-secondary small mb-0">No education entries added yet.</p>
                             </div>
                         @endforelse
                     </div>
                 </div>
+
+                <!-- Organizations & Leadership -->
+                @if($organizations->isNotEmpty())
+                    <div class="mb-5">
+                        <h3 class="fw-bold mb-4 text-gradient" style="font-size: 1.25rem;"><i class="bi bi-people text-primary" aria-hidden="true"></i> Organizations & Leadership</h3>
+                        <div class="timeline">
+                            @foreach($organizations as $org)
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <span class="timeline-year">{{ $org->start_date }} — {{ $org->end_date }}</span>
+                                    <h4 class="timeline-title">{{ $org->position }}</h4>
+                                    <p class="timeline-subtitle mb-2 text-primary">{{ $org->organization }}</p>
+                                    @if($org->description)
+                                        <p class="timeline-desc mb-0" style="white-space: pre-wrap;">{{ $org->description }}</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Awards & Honors -->
+                @if($awards->isNotEmpty())
+                    <div>
+                        <h3 class="fw-bold mb-4 text-gradient" style="font-size: 1.25rem;"><i class="bi bi-trophy text-primary" aria-hidden="true"></i> Awards & Honors</h3>
+                        <div class="row g-3">
+                            @foreach($awards as $award)
+                                <div class="col-sm-6">
+                                    <div class="card-custom h-100" style="padding: 1.25rem;">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h4 class="fw-bold fs-6 mb-0 text-gradient">{{ $award->title }}</h4>
+                                            <span class="badge bg-dark border text-light px-2 py-1" style="font-size: 0.7rem;">{{ $award->year }}</span>
+                                        </div>
+                                        @if($award->issuer)
+                                            <p class="text-primary fw-semibold small mb-2" style="font-size: 0.8rem;">{{ $award->issuer }}</p>
+                                        @endif
+                                        @if($award->description)
+                                            <p class="small text-secondary mb-0" style="font-size: 0.8rem; line-height: 1.5;">{{ $award->description }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

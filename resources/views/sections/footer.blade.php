@@ -15,19 +15,30 @@
         <!-- Social Icons shortcuts -->
         <div class="footer-social-links mb-4 d-flex justify-content-center gap-3" aria-label="Social Profiles">
             @forelse($social_links as $link)
-                <a href="{{ $link->url }}" target="_blank" class="footer-social-icon" aria-label="Visit Ghoza Himma {{ $link->platform }}">
+                <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Visit {{ $link->platform }}">
                     <i class="{{ $link->icon ?: 'bi bi-link-45deg' }}" aria-hidden="true"></i>
                 </a>
             @empty
-                <a href="{{ $globalSettings['contact_github'] }}" target="_blank" class="footer-social-icon" aria-label="Visit Ghoza Himma GitHub">
-                    <i class="bi bi-github" aria-hidden="true"></i>
-                </a>
-                <a href="{{ $globalSettings['contact_linkedin'] }}" target="_blank" class="footer-social-icon" aria-label="Visit Ghoza Himma LinkedIn">
-                    <i class="bi bi-linkedin" aria-hidden="true"></i>
-                </a>
-                <a href="mailto:{{ $globalSettings['contact_email'] }}" class="footer-social-icon" aria-label="Email Ghoza Himma">
-                    <i class="bi bi-envelope-fill" aria-hidden="true"></i>
-                </a>
+                @if(!empty($globalSettings['contact_github']))
+                    <a href="{{ $globalSettings['contact_github'] }}" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Visit GitHub">
+                        <i class="bi bi-github" aria-hidden="true"></i>
+                    </a>
+                @endif
+                @if(!empty($globalSettings['contact_linkedin']))
+                    <a href="{{ $globalSettings['contact_linkedin'] }}" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Visit LinkedIn">
+                        <i class="bi bi-linkedin" aria-hidden="true"></i>
+                    </a>
+                @endif
+                @if(!empty($globalSettings['contact_instagram']))
+                    <a href="{{ $globalSettings['contact_instagram'] }}" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Visit Instagram">
+                        <i class="bi bi-instagram" aria-hidden="true"></i>
+                    </a>
+                @endif
+                @if(!empty($globalSettings['contact_email']))
+                    <a href="mailto:{{ $globalSettings['contact_email'] }}" class="footer-social-icon" aria-label="Email">
+                        <i class="bi bi-envelope-fill" aria-hidden="true"></i>
+                    </a>
+                @endif
             @endforelse
         </div>
 

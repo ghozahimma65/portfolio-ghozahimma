@@ -2,39 +2,82 @@
 <section id="home" class="hero-section position-relative overflow-hidden">
     <div class="container">
         <div class="row align-items-center g-5">
-            <!-- Hero Left: Typography Focus -->
+            <!-- Hero Left: Typography & Profile Focus -->
             <div class="col-lg-7 pe-lg-4" data-aos="fade-right" data-aos-duration="600">
-                <span class="hero-subtitle">{{ $globalSettings['about_headline'] }}</span>
+            <!-- Hero Left: Typography & Profile Focus -->
+            <div class="col-lg-7 pe-lg-4" data-aos="fade-right" data-aos-duration="600">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    @if(!empty($globalSettings['about_photo']))
+                        <div class="position-relative hero-avatar-sm" style="width: 58px; height: 58px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent); flex-shrink: 0;">
+                            <img src="{{ str_starts_with($globalSettings['about_photo'], 'http') ? $globalSettings['about_photo'] : asset($globalSettings['about_photo']) }}" alt="Ghoza Himma" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    @endif
+                    <div>
+                        <span class="hero-subtitle mb-1 d-block">{{ $globalSettings['about_headline'] ?: 'Software Developer & Backend Specialist' }}</span>
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1" style="font-size: 0.7rem;">
+                            <i class="bi bi-circle-fill me-1" style="font-size: 0.45rem;"></i> Available for Hiring
+                        </span>
+                    </div>
+                </div>
                 
                 <h1 class="hero-title text-gradient mb-3">
                     Building robust, secure & scalable applications.
                 </h1>
  
-                <!-- Custom Typing Text -->
+                <!-- Dynamic Typing Text -->
                 <p class="hero-tagline mb-3">
-                    Specialized in <span id="typing-text" style="color: var(--accent); font-weight: 700;"></span><span class="typed-cursor" aria-hidden="true">|</span>
+                    Specialized in <span id="typing-text" data-words="{{ json_encode(array_values(array_filter([$globalSettings['about_headline'], $globalSettings['about_current_focus'], $globalSettings['about_career_goal']]))) }}" style="color: var(--accent); font-weight: 700;"></span><span class="typed-cursor" aria-hidden="true">|</span>
                 </p>
                 
                 <p class="fs-6 mb-4" style="color: var(--text-secondary); max-width: 580px; line-height: 1.8;">
                     {{ $globalSettings['about_biography'] }}
                 </p>
 
-                <!-- Core Technologies pills -->
+                <!-- Career Goal & Current Focus Highlights -->
+                @if(!empty($globalSettings['about_career_goal']) || !empty($globalSettings['about_current_focus']))
+                    <div class="row g-2 mb-4">
+                        @if(!empty($globalSettings['about_career_goal']))
+                            <div class="col-md-6">
+                                <div class="p-2 border rounded" style="border-color: var(--border-color) !important; background: rgba(255,255,255,0.02);">
+                                    <span class="d-block text-primary fw-bold" style="font-size: 0.75rem;"><i class="bi bi-bullseye me-1"></i> Career Goal</span>
+                                    <span class="text-secondary" style="font-size: 0.8rem;">{{ $globalSettings['about_career_goal'] }}</span>
+                                </div>
+                            </div>
+                        @endif
+                        @if(!empty($globalSettings['about_current_focus']))
+                            <div class="col-md-6">
+                                <div class="p-2 border rounded" style="border-color: var(--border-color) !important; background: rgba(255,255,255,0.02);">
+                                    <span class="d-block text-primary fw-bold" style="font-size: 0.75rem;"><i class="bi bi-cpu me-1"></i> Current Focus</span>
+                                    <span class="text-secondary" style="font-size: 0.8rem;">{{ $globalSettings['about_current_focus'] }}</span>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
+                <!-- Dynamic Core Technologies pills -->
                 <div class="d-flex flex-wrap gap-2 mb-4" aria-label="Core Technical Stack">
-                    <span class="skill-badge"><i class="bi bi-server text-primary" aria-hidden="true"></i> Laravel</span>
-                    <span class="skill-badge"><i class="bi bi-phone-fill text-primary" aria-hidden="true"></i> Flutter</span>
-                    <span class="skill-badge"><i class="bi bi-code-slash text-primary" aria-hidden="true"></i> PHP</span>
-                    <span class="skill-badge"><i class="bi bi-database-fill text-primary" aria-hidden="true"></i> MySQL</span>
-                    <span class="skill-badge"><i class="bi bi-braces text-primary" aria-hidden="true"></i> REST API</span>
-                    <span class="skill-badge"><i class="bi bi-cpu text-primary" aria-hidden="true"></i> ESP32</span>
+                    @forelse($skills->take(8) as $skill)
+                        <span class="skill-badge">
+                            @if($skill->icon)
+                                <i class="{{ $skill->icon }} text-primary" aria-hidden="true"></i>
+                            @else
+                                <i class="bi bi-code-slash text-primary" aria-hidden="true"></i>
+                            @endif
+                            {{ $skill->name }}
+                        </span>
+                    @empty
+                        <span class="skill-badge"><i class="bi bi-server text-primary"></i> Laravel</span>
+                        <span class="skill-badge"><i class="bi bi-phone-fill text-primary"></i> Flutter</span>
+                    @endforelse
                 </div>
 
-                <!-- Call-To-Action Apple/Vercel rectangular buttons -->
+                <!-- Call-To-Action buttons -->
                 <div class="d-flex flex-wrap gap-3 mb-4">
-                    <a href="#projects" class="btn-custom btn-custom-accent" aria-label="View Ghoza Himma Projects">
+                    <a href="#projects" class="btn-custom btn-custom-accent" aria-label="View Projects">
                         View Projects <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
                     </a>
-                    <a href="#contact" class="btn-custom btn-custom-secondary" aria-label="Contact Ghoza Himma">
+                    <a href="#contact" class="btn-custom btn-custom-secondary" aria-label="Contact Me">
                         Contact Me <i class="bi bi-chat-dots" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('portfolio.cv.download') }}" class="btn-custom btn-custom-secondary" aria-label="Download CV as PDF">
@@ -46,19 +89,19 @@
                 <div class="row g-4 hero-stats-row text-start">
                     <div class="col-4">
                         <div class="hero-stat-item">
-                            <div class="hero-stat-number"><span class="counter-value" data-target="{{ $projects->count() ?: 3 }}">0</span>+</div>
+                            <div class="hero-stat-number"><span class="counter-value" data-target="{{ $projects->count() }}">0</span></div>
                             <div class="hero-stat-label">Projects</div>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="hero-stat-item">
-                            <div class="hero-stat-number"><span class="counter-value" data-target="{{ $experiences->count() ?: 1 }}">0</span></div>
-                            <div class="hero-stat-label">Internship</div>
+                            <div class="hero-stat-number"><span class="counter-value" data-target="{{ $experiences->count() }}">0</span></div>
+                            <div class="hero-stat-label">Experience</div>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="hero-stat-item">
-                            <div class="hero-stat-number">{{ $skills->count() ?: 6 }}</div>
+                            <div class="hero-stat-number"><span class="counter-value" data-target="{{ $skills->count() }}">0</span></div>
                             <div class="hero-stat-label">Core Techs</div>
                         </div>
                     </div>

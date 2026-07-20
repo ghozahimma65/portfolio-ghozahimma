@@ -21,47 +21,81 @@
                      <!-- Direct Connect list -->
                     <div class="contact-info-list my-2">
                         <!-- Email Link -->
-                        <div class="contact-info-item">
-                            <div class="contact-info-icon" aria-hidden="true">
-                                <i class="bi bi-envelope-fill"></i>
+                        @if(!empty($globalSettings['contact_email']))
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon" aria-hidden="true">
+                                    <i class="bi bi-envelope-fill"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h4>Email Address</h4>
+                                    <p><a href="mailto:{{ $globalSettings['contact_email'] }}" aria-label="Send email">{{ $globalSettings['contact_email'] }}</a></p>
+                                </div>
                             </div>
-                            <div class="contact-info-text">
-                                <h4>Email Address</h4>
-                                <p><a href="mailto:{{ $globalSettings['contact_email'] }}" aria-label="Send email to {{ $globalSettings['contact_email'] }}">{{ $globalSettings['contact_email'] }}</a></p>
-                            </div>
-                        </div>
- 
+                        @endif
+
                         <!-- LinkedIn Link -->
-                        <div class="contact-info-item">
-                            <div class="contact-info-icon" aria-hidden="true">
-                                <i class="bi bi-linkedin"></i>
+                        @if(!empty($globalSettings['contact_linkedin']))
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon" aria-hidden="true">
+                                    <i class="bi bi-linkedin"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h4>LinkedIn</h4>
+                                    <p><a href="{{ $globalSettings['contact_linkedin'] }}" target="_blank" rel="noopener noreferrer" aria-label="Visit LinkedIn">{{ str_replace(['https://', 'http://', 'www.'], '', $globalSettings['contact_linkedin']) }}</a></p>
+                                </div>
                             </div>
-                            <div class="contact-info-text">
-                                <h4>LinkedIn</h4>
-                                <p><a href="{{ $globalSettings['contact_linkedin'] }}" target="_blank" aria-label="Visit Ghoza Himma LinkedIn profile">{{ str_replace(['https://', 'www.'], '', $globalSettings['contact_linkedin']) }}</a></p>
-                            </div>
-                        </div>
- 
+                        @endif
+
                         <!-- GitHub Link -->
-                        <div class="contact-info-item">
-                            <div class="contact-info-icon" aria-hidden="true">
-                                <i class="bi bi-github"></i>
+                        @if(!empty($globalSettings['contact_github']))
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon" aria-hidden="true">
+                                    <i class="bi bi-github"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h4>GitHub</h4>
+                                    <p><a href="{{ $globalSettings['contact_github'] }}" target="_blank" rel="noopener noreferrer" aria-label="Visit GitHub">{{ str_replace(['https://', 'http://', 'www.'], '', $globalSettings['contact_github']) }}</a></p>
+                                </div>
                             </div>
-                            <div class="contact-info-text">
-                                <h4>GitHub</h4>
-                                <p><a href="{{ $globalSettings['contact_github'] }}" target="_blank" aria-label="Visit Ghoza Himma GitHub profile">{{ str_replace(['https://', 'www.'], '', $globalSettings['contact_github']) }}</a></p>
+                        @endif
+
+                        <!-- Instagram Link -->
+                        @if(!empty($globalSettings['contact_instagram']))
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon" aria-hidden="true">
+                                    <i class="bi bi-instagram"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h4>Instagram</h4>
+                                    <p><a href="{{ $globalSettings['contact_instagram'] }}" target="_blank" rel="noopener noreferrer" aria-label="Visit Instagram">{{ str_replace(['https://', 'http://', 'www.'], '', $globalSettings['contact_instagram']) }}</a></p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
+
+                        <!-- Location Link -->
+                        @if(!empty($globalSettings['contact_location']))
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon" aria-hidden="true">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h4>Location</h4>
+                                    <p>{{ $globalSettings['contact_location'] }}</p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
  
                     <!-- WhatsApp CTA Card -->
-                    <div class="card-custom text-start" style="padding: 1.5rem;">
-                        <h4 class="fw-bold text-gradient mb-2" style="font-family: 'Sora', sans-serif; font-size: 1.05rem;"><i class="bi bi-whatsapp text-success" aria-hidden="true"></i> Direct Chat</h4>
-                        <p class="text-secondary small mb-3" style="font-size: 0.8rem; line-height: 1.5;">Hubungi saya langsung via WhatsApp untuk respons cepat.</p>
-                        <a href="https://wa.me/{{ $globalSettings['contact_whatsapp'] }}?text=Hello%20Ghoza%20Himma,%20I%20visited%20your%20portfolio%20website..." target="_blank" class="link-arrow" aria-label="Chat directly with Ghoza Himma on WhatsApp">
-                            Chat on WhatsApp <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                        </a>
-                    </div>
+                    @if(!empty($globalSettings['contact_whatsapp']))
+                        <div class="card-custom text-start" style="padding: 1.5rem;">
+                            <h4 class="fw-bold text-gradient mb-2" style="font-family: 'Sora', sans-serif; font-size: 1.05rem;"><i class="bi bi-whatsapp text-success" aria-hidden="true"></i> Direct Chat</h4>
+                            <p class="text-secondary small mb-3" style="font-size: 0.8rem; line-height: 1.5;">Hubungi saya langsung via WhatsApp untuk respons cepat.</p>
+                            <a href="{{ str_starts_with($globalSettings['contact_whatsapp'], 'http') ? $globalSettings['contact_whatsapp'] : 'https://wa.me/' . preg_replace('/[^0-9]/', '', $globalSettings['contact_whatsapp']) . '?text=Hello,%20I%20visited%20your%20portfolio...' }}" target="_blank" rel="noopener noreferrer" class="link-arrow" aria-label="Chat directly on WhatsApp">
+                                Chat on WhatsApp <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
 

@@ -10,7 +10,9 @@
     <meta name="description" content="@yield('meta_description', $globalSettings['seo_meta_description'])">
     <meta name="keywords" content="{{ $globalSettings['seo_keywords'] }}">
     <meta name="author" content="Ghoza Himma Al Farizqi">
-    <meta name="robots" content="{{ $globalSettings['seo_robots'] }}">
+    <meta name="robots" content="{{ $globalSettings['seo_robots'] ?: 'index, follow' }}">
+    <meta name="theme-color" content="#050505">
+    <link rel="canonical" href="{{ url()->current() }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -20,34 +22,44 @@
     <meta property="og:image" content="{{ $globalSettings['seo_og_image'] && str_starts_with($globalSettings['seo_og_image'], 'http') ? $globalSettings['seo_og_image'] : asset($globalSettings['seo_og_image']) }}">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="{{ $globalSettings['seo_twitter_card'] }}">
+    <meta property="twitter:card" content="{{ $globalSettings['seo_twitter_card'] ?: 'summary_large_image' }}">
     <meta property="twitter:url" content="{{ url()->current() }}">
     <meta property="twitter:title" content="@yield('title', $globalSettings['seo_meta_title'])">
     <meta property="twitter:description" content="@yield('meta_description', $globalSettings['seo_meta_description'])">
     <meta property="twitter:image" content="{{ $globalSettings['seo_og_image'] && str_starts_with($globalSettings['seo_og_image'], 'http') ? $globalSettings['seo_og_image'] : asset($globalSettings['seo_og_image']) }}">
 
-    <!-- JSON-LD Person Schema for Search Engines -->
+    <!-- Structured Data: Person & WebSite Schemas -->
     <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "Person",
-        "name": "Ghoza Himma Al Farizqi",
-        "jobTitle": "{{ $globalSettings['about_headline'] }}",
-        "description": "{{ $globalSettings['seo_meta_description'] }}",
-        "url": "{{ url('/') }}",
-        "sameAs": [
-            "{{ $globalSettings['contact_github'] }}",
-            "{{ $globalSettings['contact_linkedin'] }}"
-        ]
-    }
+    [
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Ghoza Himma Al Farizqi",
+            "jobTitle": "{{ $globalSettings['about_headline'] ?: 'Software Developer' }}",
+            "description": "{{ $globalSettings['seo_meta_description'] }}",
+            "url": "{{ url('/') }}",
+            "sameAs": [
+                "{{ $globalSettings['contact_github'] }}",
+                "{{ $globalSettings['contact_linkedin'] }}"
+            ]
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Ghoza Himma Portfolio",
+            "url": "{{ url('/') }}"
+        }
+    ]
     </script>
 
-    <!-- Favicon -->
+    <!-- Favicon & PWA Manifest -->
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
 
-    <!-- Google Fonts: Sora & Manrope -->
+    <!-- Performance & Asset Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
@@ -80,35 +92,35 @@
     <!-- 2. Sticky Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top" aria-label="Primary Navigation">
         <div class="container">
-            <a class="navbar-brand" href="#home" aria-label="Ghoza Himma Portfolio Home">GHOZA.</a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu" style="color: var(--text-primary);">
+            <a class="navbar-brand" href="{{ url('/#home') }}" aria-label="Ghoza Himma Portfolio Home">GHOZA.</a>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu" style="color: var(--text-primary);">
                 <i class="bi bi-list fs-2" aria-hidden="true"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <ul class="navbar-nav ms-auto align-items-center gap-1 gap-lg-2 py-2 py-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#home" aria-current="page">Home</a>
+                        <a class="nav-link active" href="{{ url('/#home') }}" aria-current="page">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="{{ url('/#about') }}">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#experience">Experience</a>
+                        <a class="nav-link" href="{{ url('/#experience') }}">Experience</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#projects">Projects</a>
+                        <a class="nav-link" href="{{ url('/#projects') }}">Projects</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#skills">Skills</a>
+                        <a class="nav-link" href="{{ url('/#skills') }}">Skills</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#certificates">Certificates</a>
+                        <a class="nav-link" href="{{ url('/#certificates') }}">Certificates</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="{{ url('/#contact') }}">Contact</a>
                     </li>
                     <!-- Theme Toggle Button -->
-                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
                         <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
                             <i class="bi bi-sun-fill" aria-hidden="true"></i>
                         </button>

@@ -33,24 +33,37 @@
                                     </span>
                                 </div>
                                 
-                                <p class="small text-secondary mb-3">Tanggung jawab utama dan pencapaian selama magang:</p>
-                                <ul class="resp-list-custom mb-4">
-                                    @foreach($experience->responsibilities as $responsibility)
-                                        <li>{{ $responsibility }}</li>
-                                    @endforeach
-                                </ul>
+                                @if(!empty($experience->responsibilities) && is_array($experience->responsibilities))
+                                    <p class="small text-secondary mb-2 fw-semibold">Main Responsibilities:</p>
+                                    <ul class="resp-list-custom mb-3">
+                                        @foreach($experience->responsibilities as $responsibility)
+                                            <li>{{ $responsibility }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+
+                                @if(!empty($experience->achievements) && is_array($experience->achievements))
+                                    <div class="p-3 mb-4 rounded border" style="background-color: rgba(234, 179, 8, 0.05); border-color: rgba(234, 179, 8, 0.2) !important;">
+                                        <p class="small text-warning mb-2 fw-bold d-flex align-items-center gap-1"><i class="bi bi-trophy-fill me-1"></i> Key Achievements:</p>
+                                        <ul class="resp-list-custom mb-0">
+                                            @foreach($experience->achievements as $achievement)
+                                                <li style="color: var(--text-primary);">{{ $achievement }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
 
                                 <!-- Technologies used during this role -->
-                                <div class="border-top pt-3" style="border-color: var(--border-color) !important;">
-                                    <span class="small text-secondary d-block mb-2" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Technologies Applied:</span>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <span class="project-tech-badge">Laravel</span>
-                                        <span class="project-tech-badge">MySQL</span>
-                                        <span class="project-tech-badge">ESP32 Telemetry</span>
-                                        <span class="project-tech-badge">REST API</span>
-                                        <span class="project-tech-badge">Git Versioning</span>
+                                @if(!empty($experience->tech_stack) && is_array($experience->tech_stack))
+                                    <div class="border-top pt-3" style="border-color: var(--border-color) !important;">
+                                        <span class="small text-secondary d-block mb-2" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Technologies Applied:</span>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach($experience->tech_stack as $tech)
+                                                <span class="project-tech-badge">{{ $tech }}</span>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     @empty

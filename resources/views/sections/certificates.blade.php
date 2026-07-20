@@ -32,7 +32,7 @@
 
                             <!-- Optional Credential link -->
                             @if(!empty($certificate->credential_url))
-                                <a href="{{ $certificate->credential_url }}" target="_blank" class="link-arrow mt-auto" aria-label="Verify Ghoza Himma Certificate for {{ $certificate->title }}">
+                                <a href="{{ $certificate->credential_url }}" target="_blank" rel="noopener noreferrer" class="link-arrow mt-auto" aria-label="Verify Ghoza Himma Certificate for {{ $certificate->title }}">
                                     Verify Credential <i class="bi bi-chevron-right" aria-hidden="true"></i>
                                 </a>
                             @endif

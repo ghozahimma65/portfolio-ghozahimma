@@ -73,9 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         navLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
             link.classList.remove('active');
             link.removeAttribute('aria-current');
-            if (link.getAttribute('href') === `#${currentSectionId}`) {
+            if (currentSectionId && (href.endsWith('#' + currentSectionId) || href === '#' + currentSectionId)) {
                 link.classList.add('active');
                 link.setAttribute('aria-current', 'page');
             }
@@ -113,7 +114,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. TYPING ANIMATION (Vanilla JS)
     const typingElement = document.getElementById('typing-text');
     if (typingElement) {
-        const words = ['Laravel Backend APIs', 'Flutter Mobile Products', 'Telemetry IoT Systems'];
+        let words = ['Laravel Backend APIs', 'Flutter Mobile Products', 'Telemetry IoT Systems'];
+        try {
+            const attrWords = typingElement.getAttribute('data-words');
+            if (attrWords) {
+                const parsed = JSON.parse(attrWords);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    words = parsed;
+                }
+            }
+        } catch (e) {
+            console.warn('Could not parse data-words for typing effect:', e);
+        }
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
@@ -190,21 +202,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Remove active from all
             filterButtons.forEach(btn => {
                 btn.classList.remove('active');
                 btn.setAttribute('aria-selected', 'false');
             });
-            // Add active to current
             button.classList.add('active');
             button.setAttribute('aria-selected', 'true');
 
-            const filterValue = button.getAttribute('data-filter');
+            const filterValue = button.getAttribute('data-filter').toLowerCase();
 
             projectItems.forEach(item => {
-                const techTags = item.getAttribute('data-tech').toLowerCase();
+                const techTags = (item.getAttribute('data-tech') || '').toLowerCase();
+                const isFeatured = item.getAttribute('data-featured') === 'true';
                 
-                if (filterValue === 'all' || techTags.includes(filterValue.toLowerCase())) {
+                if (filterValue === 'all') {
+                    item.classList.remove('hidden');
+                } else if (filterValue === 'featured') {
+                    if (isFeatured) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                } else if (techTags.includes(filterValue)) {
                     item.classList.remove('hidden');
                 } else {
                     item.classList.add('hidden');
@@ -213,16 +232,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 7. PROJECT DETAILS MODAL BINDING WITH CASE STUDIES (Problem, Solution, Result)
+    // 7. PROJECT DETAILS MODAL BINDING WITH CASE STUDIES (Problem, Solution, Result & Gallery)
     const projectModal = document.getElementById('projectModal');
     if (projectModal) {
         projectModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget;
+            if (!button) return;
             
             // Extract details from data-* attributes
             const title = button.getAttribute('data-title');
             const role = button.getAttribute('data-role');
             const duration = button.getAttribute('data-duration');
+            const shortDesc = button.getAttribute('data-short-desc');
             const description = button.getAttribute('data-desc');
             const problem = button.getAttribute('data-problem') || 'No problem statement defined.';
             const solution = button.getAttribute('data-solution') || 'No solution description defined.';
@@ -230,20 +251,56 @@ document.addEventListener('DOMContentLoaded', () => {
             const image = button.getAttribute('data-img');
             const github = button.getAttribute('data-github');
             const demo = button.getAttribute('data-demo');
+            const url = button.getAttribute('data-url');
             const tech = JSON.parse(button.getAttribute('data-tech') || '[]');
             const features = JSON.parse(button.getAttribute('data-features') || '[]');
+            const gallery = JSON.parse(button.getAttribute('data-gallery') || '[]');
 
-            // Update modal content
+            // Update modal title, image, role, duration, description
             projectModal.querySelector('.modal-title').textContent = title;
             projectModal.querySelector('#modal-project-img').src = image;
             projectModal.querySelector('#modal-project-role').textContent = role || 'Developer';
             projectModal.querySelector('#modal-project-duration').textContent = duration || 'N/A';
+            
+            // Short desc wrap
+            const shortDescWrap = projectModal.querySelector('#modal-project-short-desc-wrap');
+            const shortDescElem = projectModal.querySelector('#modal-project-short-desc');
+            if (shortDescWrap && shortDescElem) {
+                if (shortDesc) {
+                    shortDescElem.textContent = shortDesc;
+                    shortDescWrap.style.display = 'block';
+                } else {
+                    shortDescWrap.style.display = 'none';
+                }
+            }
+
             projectModal.querySelector('#modal-project-desc').textContent = description;
             
             // Render Case Study Blocks
             projectModal.querySelector('#modal-project-problem').textContent = problem;
             projectModal.querySelector('#modal-project-solution').textContent = solution;
             projectModal.querySelector('#modal-project-result').textContent = result;
+
+            // Render Gallery Images
+            const galleryWrap = projectModal.querySelector('#modal-project-gallery-wrap');
+            const galleryContainer = projectModal.querySelector('#modal-project-gallery');
+            if (galleryWrap && galleryContainer) {
+                galleryContainer.innerHTML = '';
+                if (Array.isArray(gallery) && gallery.length > 0) {
+                    gallery.forEach(imgUrl => {
+                        const imgFrame = document.createElement('div');
+                        imgFrame.style.cssText = 'width: 90px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color); cursor: pointer;';
+                        imgFrame.innerHTML = `<img src="${imgUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                        imgFrame.addEventListener('click', () => {
+                            projectModal.querySelector('#modal-project-img').src = imgUrl;
+                        });
+                        galleryContainer.appendChild(imgFrame);
+                    });
+                    galleryWrap.style.display = 'block';
+                } else {
+                    galleryWrap.style.display = 'none';
+                }
+            }
 
             // Render Tech Tags
             const techContainer = projectModal.querySelector('#modal-project-tech');
@@ -279,6 +336,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 demoBtn.style.display = 'inline-flex';
             } else {
                 demoBtn.style.display = 'none';
+            }
+
+            const detailBtn = projectModal.querySelector('#modal-detail-link');
+            if (detailBtn) {
+                if (url) {
+                    detailBtn.href = url;
+                    detailBtn.style.display = 'inline-flex';
+                } else {
+                    detailBtn.style.display = 'none';
+                }
             }
         });
     }

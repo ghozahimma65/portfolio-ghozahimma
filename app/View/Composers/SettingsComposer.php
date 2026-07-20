@@ -23,13 +23,18 @@ class SettingsComposer
             $aboutResume = ltrim(\Illuminate\Support\Facades\Storage::disk('public')->url($aboutResume), '/');
         }
 
+        $ogImage = Setting::get('seo_og_image', 'assets/images/profile-avatar.png');
+        if ($ogImage && ! str_starts_with($ogImage, 'assets/') && ! str_starts_with($ogImage, 'http') && ! str_starts_with($ogImage, 'storage/')) {
+            $ogImage = ltrim(\Illuminate\Support\Facades\Storage::disk('public')->url($ogImage), '/');
+        }
+
         $view->with('globalSettings', [
             // SEO
             'seo_meta_title'       => Setting::get('seo_meta_title', 'Ghoza Himma Al Farizqi | Software Developer & Backend Developer'),
             'seo_meta_description' => Setting::get('seo_meta_description', 'Fresh Graduate D3 Manajemen Informatika dari Politeknik Negeri Jember.'),
             'seo_keywords'         => Setting::get('seo_keywords', 'Laravel, Backend, Flutter, IoT, ESP32'),
             'seo_robots'           => Setting::get('seo_robots', 'index, follow'),
-            'seo_og_image'         => Setting::get('seo_og_image', 'assets/images/profile-avatar.png'),
+            'seo_og_image'         => $ogImage,
             'seo_twitter_card'     => Setting::get('seo_twitter_card', 'summary_large_image'),
 
             // Profile
