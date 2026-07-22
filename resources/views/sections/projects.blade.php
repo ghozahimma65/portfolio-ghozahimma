@@ -9,16 +9,13 @@
 
         <!-- Project Filtering Menu -->
         <div class="d-flex justify-content-center mb-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-            <div class="filter-btn-group flex-wrap justify-content-center gap-1" role="tablist" aria-label="Project Tech Filter">
-                <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
-                @if($projects->where('featured', true)->count() > 0)
-                    <button class="filter-btn text-warning" data-filter="featured" role="tab" aria-selected="false"><i class="bi bi-star-fill me-1"></i> Featured</button>
+            <div class="filter-btn-group flex-wrap justify-content-center gap-1">
+                <a href="{{ url('/?tech=all#projects') }}" class="filter-btn text-decoration-none {{ (empty($techFilter) || $techFilter === 'all') ? 'active' : '' }}" data-filter="all">All</a>
+                @if($hasFeatured)
+                    <a href="{{ url('/?tech=featured#projects') }}" class="filter-btn text-warning text-decoration-none {{ ($techFilter === 'featured') ? 'active' : '' }}" data-filter="featured"><i class="bi bi-star-fill me-1"></i> Featured</a>
                 @endif
-                @php
-                    $techFilters = $projects->pluck('tech_stack')->flatten()->filter()->unique()->values();
-                @endphp
                 @foreach($techFilters as $tech)
-                    <button class="filter-btn" data-filter="{{ $tech }}" role="tab" aria-selected="false">{{ $tech }}</button>
+                    <a href="{{ url('/?tech=' . urlencode($tech) . '#projects') }}" class="filter-btn text-decoration-none {{ ($techFilter === $tech) ? 'active' : '' }}" data-filter="{{ $tech }}">{{ $tech }}</a>
                 @endforeach
             </div>
         </div>
@@ -34,6 +31,22 @@
                 </div>
             @endforelse
         </div>
+
+        <!-- Pagination Info & Links -->
+        @if($projects->total() > 0)
+            <div class="mt-5 text-center animate-fade-in" data-aos="fade-up">
+                <p class="text-secondary small mb-3">
+                    Showing {{ $projects->firstItem() }}–{{ $projects->lastItem() }} of {{ $projects->total() }}
+                    @if($techFilter === 'featured')
+                        Featured
+                    @elseif(!empty($techFilter) && $techFilter !== 'all')
+                        {{ $techFilter }}
+                    @endif
+                    Projects
+                </p>
+                {{ $projects->links('partials.pagination') }}
+            </div>
+        @endif
     </div>
 
     <!-- -------------------------------------------------------------
@@ -91,38 +104,7 @@
                                 <p id="modal-project-desc" class="text-secondary mb-0" style="line-height: 1.7; font-size: 0.9rem; white-space: pre-wrap;"></p>
                             </div>
 
-                            <!-- Case Study Breakdown (Problem, Solution, Result) -->
-                            <div class="row g-3 mb-4">
-                                <!-- Problem Box -->
-                                <div class="col-12 col-md-4">
-                                    <div class="modal-section-box h-100">
-                                        <div class="modal-section-title red">
-                                            <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> The Problem
-                                        </div>
-                                        <p id="modal-project-problem" class="small text-secondary mb-0" style="font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap;"></p>
-                                    </div>
-                                </div>
 
-                                <!-- Solution Box -->
-                                <div class="col-12 col-md-4">
-                                    <div class="modal-section-box h-100">
-                                        <div class="modal-section-title blue">
-                                            <i class="bi bi-gear-wide-connected" aria-hidden="true"></i> The Solution
-                                        </div>
-                                        <p id="modal-project-solution" class="small text-secondary mb-0" style="font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap;"></p>
-                                    </div>
-                                </div>
-
-                                <!-- Result Box -->
-                                <div class="col-12 col-md-4">
-                                    <div class="modal-section-box h-100">
-                                        <div class="modal-section-title green">
-                                            <i class="bi bi-graph-up-arrow" aria-hidden="true"></i> The Result
-                                        </div>
-                                        <p id="modal-project-result" class="small text-secondary mb-0" style="font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap;"></p>
-                                    </div>
-                                </div>
-                            </div>
 
                             <!-- Tech tags -->
                             <div class="mb-4">

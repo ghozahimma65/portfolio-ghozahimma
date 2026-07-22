@@ -19,9 +19,21 @@ class CloudinaryService
     {
         $filePath = $file instanceof UploadedFile ? $file->getRealPath() : $file;
         
+        // Detect if the file is a PDF to use the correct 'raw' resource type on Cloudinary
+        $resourceType = 'auto';
+        if ($file instanceof UploadedFile) {
+            if ($file->getClientOriginalExtension() === 'pdf' || $file->getMimeType() === 'application/pdf') {
+                $resourceType = 'raw';
+            }
+        } elseif (is_string($file)) {
+            if (str_ends_with(strtolower($file), '.pdf')) {
+                $resourceType = 'raw';
+            }
+        }
+
         $options = [
             'folder' => $folder,
-            'resource_type' => 'auto',
+            'resource_type' => $resourceType,
         ];
 
         $response = Cloudinary::uploadApi()->upload($filePath, $options);

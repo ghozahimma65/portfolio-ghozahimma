@@ -80,7 +80,6 @@ body {
     z-index: 1000;
     padding: 1.5rem;
     display: flex;
-    flex-column;
     flex-direction: column;
     overflow-y: auto;
 }
@@ -314,4 +313,89 @@ select.form-control-admin {
     border: none;
     color: var(--text-primary);
     font-size: 1.5rem;
+}
+
+/* Drag and Drop Zone styling */
+.upload-dropzone {
+    border: 2px dashed var(--border-color) !important;
+    border-radius: var(--radius-lg);
+    background-color: rgba(255, 255, 255, 0.015);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+}
+.upload-dropzone:hover, .upload-dropzone.dragover {
+    border-color: var(--primary-blue) !important;
+    background-color: rgba(59, 130, 246, 0.05) !important;
+}
+
+/* Modern Tag Input Styling */
+.modern-tag-input-container {
+    position: relative;
+}
+.tag-chips-wrapper {
+    min-height: 46px;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.015);
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.tag-chips-wrapper:focus-within {
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 1px var(--primary-blue);
+}
+.tag-chip {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: var(--text-primary);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 2px;
+}
+.tag-chip .remove-chip-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.75rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+.tag-chip .remove-chip-btn:hover {
+    color: var(--status-danger);
+}
+.suggestions-dropdown {
+    background-color: #080b0f;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-top: 4px;
+    width: 100%;
+    position: absolute;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+.suggestions-item {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: none;
+    text-align: left;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    width: 100%;
+    display: block;
+    transition: background-color 0.15s ease;
+}
+.suggestions-item:hover, .suggestions-item.active {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--primary-blue);
 }

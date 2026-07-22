@@ -196,12 +196,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial run check in case stats are already in view
     checkCounters();
 
-    // 6. PORTFOLIO FILTERING (with fade animation)
+    // 6. PORTFOLIO FILTERING (with server-side compatibility)
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectItems = document.querySelectorAll('.project-item');
 
     filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
+            const href = button.getAttribute('href');
+            if (href) {
+                return; // Allow standard link-based page reload for server-side pagination & filter queries
+            }
+
+            e.preventDefault();
+
             filterButtons.forEach(btn => {
                 btn.classList.remove('active');
                 btn.setAttribute('aria-selected', 'false');
@@ -209,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.add('active');
             button.setAttribute('aria-selected', 'true');
 
-            const filterValue = button.getAttribute('data-filter').toLowerCase();
+            const filterValue = (button.getAttribute('data-filter') || '').toLowerCase();
 
             projectItems.forEach(item => {
                 const techTags = (item.getAttribute('data-tech') || '').toLowerCase();
@@ -276,10 +283,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             projectModal.querySelector('#modal-project-desc').textContent = description;
             
-            // Render Case Study Blocks
-            projectModal.querySelector('#modal-project-problem').textContent = problem;
-            projectModal.querySelector('#modal-project-solution').textContent = solution;
-            projectModal.querySelector('#modal-project-result').textContent = result;
+            // Render Case Study Blocks safely
+            const problemElem = projectModal.querySelector('#modal-project-problem');
+            if (problemElem) problemElem.textContent = problem;
+            const solutionElem = projectModal.querySelector('#modal-project-solution');
+            if (solutionElem) solutionElem.textContent = solution;
+            const resultElem = projectModal.querySelector('#modal-project-result');
+            if (resultElem) resultElem.textContent = result;
 
             // Render Gallery Images
             const galleryWrap = projectModal.querySelector('#modal-project-gallery-wrap');
@@ -302,15 +312,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Render Tech Tags
+            // Render Tech Tags (with toggle support)
             const techContainer = projectModal.querySelector('#modal-project-tech');
             techContainer.innerHTML = '';
-            tech.forEach(t => {
+            techContainer.className = 'project-tech-tags mb-0 toggle-tech-stack';
+            techContainer.style.cursor = 'pointer';
+            const techLimit = 4;
+            tech.forEach((t, index) => {
                 const span = document.createElement('span');
                 span.className = 'project-tech-badge';
+                if (index >= techLimit) {
+                    span.classList.add('hidden-tech', 'd-none');
+                }
                 span.textContent = t;
                 techContainer.appendChild(span);
             });
+            if (tech.length > techLimit) {
+                const moreSpan = document.createElement('span');
+                moreSpan.className = 'project-tech-badge tech-more-badge';
+                moreSpan.textContent = `+${tech.length - techLimit}`;
+                techContainer.appendChild(moreSpan);
+            }
 
             // Render Features list
             const featuresContainer = projectModal.querySelector('#modal-project-features');
@@ -465,4 +487,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Global event delegator for toggle-tech-stack click
+    document.addEventListener('click', (e) => {
+        const container = e.target.closest('.toggle-tech-stack');
+        if (container) {
+            const moreBadge = container.querySelector('.tech-more-badge');
+            const hiddenBadges = container.querySelectorAll('.hidden-tech');
+            if (moreBadge && !moreBadge.classList.contains('d-none')) {
+                e.stopPropagation();
+                hiddenBadges.forEach(badge => badge.classList.remove('d-none'));
+                moreBadge.classList.add('d-none');
+            }
+        }
+    });
 });

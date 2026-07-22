@@ -55,5 +55,10 @@ class SettingsComposer
             'contact_location'     => Setting::get('contact_location', ''),
             'contact_google_maps'  => Setting::get('contact_google_maps', ''),
         ]);
+
+        $socialLinks = \Illuminate\Support\Facades\Cache::remember('social_links_all', 86400, function () {
+            return \App\Models\SocialLink::orderBy('order', 'asc')->get();
+        });
+        $view->with('social_links', $socialLinks);
     }
 }

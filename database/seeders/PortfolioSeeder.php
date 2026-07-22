@@ -189,25 +189,29 @@ class PortfolioSeeder extends Seeder
             ['name' => 'SQLite', 'category' => 'Database', 'icon' => 'bi bi-filetype-sql', 'level' => 'Intermediate', 'order' => 2],
             // API
             ['name' => 'REST API', 'category' => 'API', 'icon' => 'bi bi-braces', 'level' => 'Advanced', 'order' => 1],
-            ['name' => 'JSON Payload', 'category' => 'API', 'icon' => 'bi bi-filetype-json', 'level' => 'Advanced', 'order' => 2],
+            ['name' => 'Laravel Sanctum', 'category' => 'API', 'icon' => 'bi bi-shield-lock-fill', 'level' => 'Advanced', 'order' => 2],
             // Mobile
             ['name' => 'Dart', 'category' => 'Mobile', 'icon' => 'bi bi-code', 'level' => 'Intermediate', 'order' => 1],
             ['name' => 'Flutter', 'category' => 'Mobile', 'icon' => 'bi bi-phone', 'level' => 'Intermediate', 'order' => 2],
             // IoT
             ['name' => 'ESP32', 'category' => 'IoT', 'icon' => 'bi bi-cpu', 'level' => 'Intermediate', 'order' => 1],
-            ['name' => 'Telemetry Sensors', 'category' => 'IoT', 'icon' => 'bi bi-broadcast', 'level' => 'Intermediate', 'order' => 2],
+            ['name' => 'HC-SR04', 'category' => 'IoT', 'icon' => 'bi bi-broadcast', 'level' => 'Intermediate', 'order' => 2],
             // Frontend
             ['name' => 'HTML5', 'category' => 'Frontend', 'icon' => 'bi bi-filetype-html', 'level' => 'Advanced', 'order' => 1],
             ['name' => 'CSS3', 'category' => 'Frontend', 'icon' => 'bi bi-filetype-css', 'level' => 'Advanced', 'order' => 2],
             ['name' => 'JavaScript', 'category' => 'Frontend', 'icon' => 'bi bi-filetype-js', 'level' => 'Intermediate', 'order' => 3],
-            ['name' => 'Bootstrap', 'category' => 'Frontend', 'icon' => 'bi bi-bootstrap', 'level' => 'Advanced', 'order' => 4],
-            // Tools
-            ['name' => 'Git', 'category' => 'Tools', 'icon' => 'bi bi-git', 'level' => 'Advanced', 'order' => 1],
-            ['name' => 'GitHub', 'category' => 'Tools', 'icon' => 'bi bi-github', 'level' => 'Advanced', 'order' => 2],
-            ['name' => 'VS Code', 'category' => 'Tools', 'icon' => 'bi bi-terminal-fill', 'level' => 'Advanced', 'order' => 3],
-            ['name' => 'Android Studio', 'category' => 'Tools', 'icon' => 'bi bi-android2', 'level' => 'Intermediate', 'order' => 4],
-            ['name' => 'Postman', 'category' => 'Tools', 'icon' => 'bi bi-send-fill', 'level' => 'Advanced', 'order' => 5],
-            ['name' => 'Figma', 'category' => 'Tools', 'icon' => 'bi bi-figma', 'level' => 'Intermediate', 'order' => 6],
+            ['name' => 'Blade', 'category' => 'Frontend', 'icon' => 'bi bi-code-slash', 'level' => 'Advanced', 'order' => 4],
+            ['name' => 'Tailwind CSS', 'category' => 'Frontend', 'icon' => 'bi bi-wind', 'level' => 'Advanced', 'order' => 5],
+            ['name' => 'Alpine.js', 'category' => 'Frontend', 'icon' => 'bi bi-lightning-fill', 'level' => 'Intermediate', 'order' => 6],
+            ['name' => 'Bootstrap', 'category' => 'Frontend', 'icon' => 'bi bi-bootstrap', 'level' => 'Advanced', 'order' => 7],
+            ['name' => 'Vite', 'category' => 'Frontend', 'icon' => 'bi bi-lightning-charge-fill', 'level' => 'Advanced', 'order' => 8],
+            // Development Ecosystem
+            ['name' => 'Git', 'category' => 'Development Ecosystem', 'icon' => 'bi bi-git', 'level' => 'Advanced', 'order' => 1],
+            ['name' => 'GitHub', 'category' => 'Development Ecosystem', 'icon' => 'bi bi-github', 'level' => 'Advanced', 'order' => 2],
+            ['name' => 'VS Code', 'category' => 'Development Ecosystem', 'icon' => 'bi bi-terminal-fill', 'level' => 'Advanced', 'order' => 3],
+            ['name' => 'Android Studio', 'category' => 'Development Ecosystem', 'icon' => 'bi bi-android2', 'level' => 'Intermediate', 'order' => 4],
+            ['name' => 'Postman', 'category' => 'Development Ecosystem', 'icon' => 'bi bi-send-fill', 'level' => 'Advanced', 'order' => 5],
+            ['name' => 'Figma', 'category' => 'Development Ecosystem', 'icon' => 'bi bi-figma', 'level' => 'Intermediate', 'order' => 6],
         ];
 
         foreach ($skills as $skill) {

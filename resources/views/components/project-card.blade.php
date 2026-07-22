@@ -9,11 +9,7 @@
                     <i class="bi bi-star-fill me-1" aria-hidden="true"></i> Featured
                 </span>
             @endif
-            @if(!empty($project->image_path))
-                <img src="{{ str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path) }}" alt="{{ $project->title }} preview image" loading="lazy">
-            @else
-                <img src="{{ asset('assets/images/project-placeholder.png') }}" alt="{{ $project->title }} placeholder preview" loading="lazy">
-            @endif
+            <img src="{{ $project->thumbnail_url }}" alt="{{ $project->title }} preview image" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('assets/images/project-placeholder.png') }}';">
         </div>
 
         <!-- Project Editorial Metadata -->
@@ -45,23 +41,29 @@
             <p class="project-card-desc mb-4">{{ $project->short_description ?: Str::limit($project->description, 115) }}</p>
 
             <!-- Tech Tags -->
-            <div class="project-tech-tags mb-4">
-                @foreach($project->tech_stack ?? [] as $tech)
-                    <span class="project-tech-badge">{{ $tech }}</span>
+            <div class="project-tech-tags mb-4 toggle-tech-stack" style="cursor: pointer;">
+                @php
+                    $techs = $project->tech_stack ?? [];
+                    $totalTechs = count($techs);
+                    $limit = 4;
+                @endphp
+                @foreach($techs as $index => $tech)
+                    <span class="project-tech-badge {{ $index >= $limit ? 'hidden-tech d-none' : '' }}">{{ $tech }}</span>
                 @endforeach
+                @if($totalTechs > $limit)
+                    <span class="project-tech-badge tech-more-badge">+{{ $totalTechs - $limit }}</span>
+                @endif
             </div>
 
             <!-- Actions Row -->
             <div class="project-card-footer">
-                @if(!empty($project->github_url))
+                @if(!empty($project->github_url) && filter_var($project->github_url, FILTER_VALIDATE_URL))
                     <a href="{{ $project->github_url }}" target="_blank" rel="noopener noreferrer" class="link-arrow" aria-label="View {{ $project->title }} GitHub Repository">
                         GitHub <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
                     </a>
-                @else
-                    <span class="small text-secondary" style="font-style: italic;">Private Repository</span>
                 @endif
                 
-                <a href="{{ route('portfolio.project', $project->slug) }}" class="link-arrow ms-2" aria-label="View page for {{ $project->title }}">
+                <a href="{{ route('portfolio.project', $project->slug) }}" class="link-arrow {{ (!empty($project->github_url) && filter_var($project->github_url, FILTER_VALIDATE_URL)) ? 'ms-2' : '' }}" aria-label="View page for {{ $project->title }}">
                     Detail <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
                 </a>
 
@@ -76,12 +78,12 @@
                         data-problem="{{ $project->problem ?? '' }}"
                         data-solution="{{ $project->solution ?? '' }}"
                         data-result="{{ $project->result ?? '' }}"
-                        data-img="{{ $project->image_path && str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path ?? 'assets/images/project-placeholder.png') }}"
-                        data-github="{{ $project->github_url ?? '#' }}"
-                        data-demo="{{ $project->demo_url ?? '#' }}"
+                        data-img="{{ $project->thumbnail_url }}"
+                        data-github="{{ (!empty($project->github_url) && filter_var($project->github_url, FILTER_VALIDATE_URL)) ? $project->github_url : '#' }}"
+                        data-demo="{{ (!empty($project->demo_url) && filter_var($project->demo_url, FILTER_VALIDATE_URL)) ? $project->demo_url : '#' }}"
                         data-tech="{{ json_encode($project->tech_stack ?? []) }}"
                         data-features="{{ json_encode($project->features ?? []) }}"
-                        data-gallery="{{ json_encode(array_map(fn($img) => str_starts_with($img, 'http') ? $img : asset($img), $project->gallery_images ?? [])) }}"
+                        data-gallery="{{ json_encode($project->gallery_urls) }}"
                         data-url="{{ route('portfolio.project', $project->slug) }}"
                         aria-label="View details of {{ $project->title }}">
                     Quick View <i class="bi bi-chevron-right" aria-hidden="true"></i>

@@ -43,12 +43,12 @@
             </div>
             <div class="col-lg-4 text-lg-end">
                 <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                    @if(!empty($project->github_url))
+                    @if(!empty($project->github_url) && filter_var($project->github_url, FILTER_VALIDATE_URL))
                         <a href="{{ $project->github_url }}" target="_blank" class="btn-custom btn-custom-secondary">
                             <i class="bi bi-github me-1"></i> GitHub Repository
                         </a>
                     @endif
-                    @if(!empty($project->demo_url))
+                    @if(!empty($project->demo_url) && filter_var($project->demo_url, FILTER_VALIDATE_URL))
                         <a href="{{ $project->demo_url }}" target="_blank" class="btn-custom btn-custom-accent">
                             <i class="bi bi-box-arrow-up-right me-1"></i> Live Demo
                         </a>
@@ -58,12 +58,8 @@
         </div>
 
         <!-- Main Banner Screenshot -->
-        <div class="mb-5 shadow-lg rounded" style="overflow: hidden; border: 1px solid var(--border-color);" data-aos="fade-up">
-            @if(!empty($project->image_path))
-                <img src="{{ str_starts_with($project->image_path, 'http') ? $project->image_path : asset($project->image_path) }}" alt="{{ $project->title }}" class="img-fluid w-100" style="max-height: 520px; object-fit: cover;">
-            @else
-                <img src="{{ asset('assets/images/project-placeholder.png') }}" alt="{{ $project->title }}" class="img-fluid w-100" style="max-height: 520px; object-fit: cover;">
-            @endif
+        <div class="mb-5 shadow-lg rounded" style="overflow: hidden; border: 1px solid var(--border-color); background-color: rgba(0, 0, 0, 0.25);" data-aos="fade-up">
+            <img src="{{ $project->thumbnail_url }}" alt="{{ $project->title }}" class="img-fluid w-100" style="max-height: 520px; object-fit: contain;" onerror="this.onerror=null; this.src='{{ asset('assets/images/project-placeholder.png') }}';">
         </div>
 
         <!-- Case Study Sections (Problem, Solution, Result) -->
@@ -111,14 +107,14 @@
                 </div>
 
                 <!-- Gallery Images -->
-                @if(!empty($project->gallery_images) && is_array($project->gallery_images))
+                @if(!empty($project->gallery_urls))
                     <div class="card-custom mb-5">
                         <h3 class="fw-bold mb-4 text-gradient"><i class="bi bi-images text-primary me-2"></i> Project Gallery</h3>
                         <div class="row g-3">
-                            @foreach($project->gallery_images as $galleryImg)
+                            @foreach($project->gallery_urls as $galleryImgUrl)
                                 <div class="col-md-6">
-                                    <div class="rounded shadow-sm overflow-hidden border" style="border-color: var(--border-color) !important; aspect-ratio: 16/10;">
-                                        <img src="{{ str_starts_with($galleryImg, 'http') ? $galleryImg : asset($galleryImg) }}" alt="Gallery Image" class="w-100 h-100" style="object-fit: cover;">
+                                    <div class="rounded shadow-sm overflow-hidden border" style="border-color: var(--border-color) !important; aspect-ratio: 16/10; background-color: rgba(0, 0, 0, 0.25);">
+                                        <img src="{{ $galleryImgUrl }}" alt="Gallery Image" class="w-100 h-100" style="object-fit: contain;" onerror="this.onerror=null; this.src='{{ asset('assets/images/project-placeholder.png') }}';">
                                     </div>
                                 </div>
                             @endforeach
@@ -149,6 +145,61 @@
                             @endforeach
                         </ul>
                     </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Related Projects Section -->
+        @if(!empty($relatedProjects) && $relatedProjects->count() > 0)
+            <div class="my-5" data-aos="fade-up">
+                <hr class="mb-5" style="border-color: var(--border-color);">
+                <h3 class="fw-bold mb-4 text-gradient"><i class="bi bi-grid-fill text-primary me-2"></i> Related Projects</h3>
+                <div class="row g-4">
+                    @foreach($relatedProjects as $relProj)
+                        <div class="col-md-6">
+                            <div class="card-custom h-100 p-4 d-flex flex-column justify-content-between">
+                                <div>
+                                    <span class="project-category-badge mb-2 d-inline-block">
+                                        @if(in_array('Flutter', $relProj->tech_stack ?? []))
+                                            Mobile Application
+                                        @elseif(in_array('ESP32', $relProj->tech_stack ?? []) || in_array('IoT Sensors', $relProj->tech_stack ?? []))
+                                            IoT Telemetry System
+                                        @else
+                                            Web Application
+                                        @endif
+                                    </span>
+                                    <h4 class="fw-bold mb-2" style="font-size: 1.2rem;">{{ $relProj->title }}</h4>
+                                    <p class="text-secondary small mb-3">{{ Str::limit($relProj->short_description ?: $relProj->description, 120) }}</p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="{{ route('portfolio.project', $relProj->slug) }}" class="link-arrow">
+                                        View Case Study <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <!-- Prev / Next Navigation -->
+        <hr class="my-5" style="border-color: var(--border-color);">
+        <div class="row g-4 mb-5" data-aos="fade-up">
+            <div class="col-6">
+                @if($prevProject)
+                    <a href="{{ route('portfolio.project', $prevProject->slug) }}" class="text-decoration-none group">
+                        <span class="text-secondary small d-block mb-1"><i class="bi bi-chevron-left"></i> Previous Project</span>
+                        <strong class="text-primary hover-accent text-gradient" style="font-size: 1.1rem;">{{ $prevProject->title }}</strong>
+                    </a>
+                @endif
+            </div>
+            <div class="col-6 text-end">
+                @if($nextProject)
+                    <a href="{{ route('portfolio.project', $nextProject->slug) }}" class="text-decoration-none group">
+                        <span class="text-secondary small d-block mb-1">Next Project <i class="bi bi-chevron-right"></i></span>
+                        <strong class="text-primary hover-accent text-gradient" style="font-size: 1.1rem;">{{ $nextProject->title }}</strong>
+                    </a>
                 @endif
             </div>
         </div>

@@ -51,6 +51,81 @@ class Project extends Model
     }
 
     /**
+     * Get the validated thumbnail URL.
+     */
+    public function getThumbnailUrlAttribute(): string
+    {
+        $path = $this->image_path;
+
+        if (empty($path)) {
+            return asset('assets/images/project-placeholder.png');
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        // Clean storage/ prefix if present
+        $cleanPath = $path;
+        if (str_starts_with($path, 'storage/')) {
+            $cleanPath = substr($path, 8); // remove 'storage/'
+        }
+
+        if (Storage::disk('public')->exists($cleanPath)) {
+            return Storage::disk('public')->url($cleanPath);
+        }
+
+        // If it starts with assets/ check if it exists in public
+        if (str_starts_with($path, 'assets/')) {
+            if (file_exists(public_path($path))) {
+                return asset($path);
+            }
+        }
+
+        // Default placeholder fallback
+        return asset('assets/images/project-placeholder.png');
+    }
+
+    /**
+     * Get validated gallery image URLs.
+     */
+    public function getGalleryUrlsAttribute(): array
+    {
+        $gallery = $this->gallery_images;
+        if (empty($gallery) || !is_array($gallery)) {
+            return [];
+        }
+
+        $urls = [];
+        foreach ($gallery as $img) {
+            if (empty($img)) {
+                continue;
+            }
+
+            if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
+                $urls[] = $img;
+                continue;
+            }
+
+            // Clean storage/ prefix if present
+            $cleanImg = $img;
+            if (str_starts_with($img, 'storage/')) {
+                $cleanImg = substr($img, 8);
+            }
+
+            if (Storage::disk('public')->exists($cleanImg)) {
+                $urls[] = Storage::disk('public')->url($cleanImg);
+            } elseif (str_starts_with($img, 'assets/')) {
+                if (file_exists(public_path($img))) {
+                    $urls[] = asset($img);
+                }
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
      * Override Route Model Binding to include soft-deleted records.
      * This allows the admin edit/update/restore screens to access trashed projects
      * without falling back to manual withTrashed()->findOrFail() in controllers.

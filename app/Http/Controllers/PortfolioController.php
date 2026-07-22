@@ -26,7 +26,31 @@ class PortfolioController extends Controller
      */
     public function index()
     {
-        $projects = Project::where('status', 'published')->orderBy('order', 'asc')->get();
+        $techFilter = request('tech', 'all');
+        
+        // Retrieve all unique published project technologies for the filter menu
+        $allPublishedProjects = Project::where('status', 'published')->get();
+        $techFilters = $allPublishedProjects->pluck('tech_stack')->flatten()->filter()->unique()->values();
+        $hasFeatured = $allPublishedProjects->where('featured', true)->count() > 0;
+        
+        // Build paginated query
+        $query = Project::where('status', 'published')->orderBy('order', 'asc');
+        
+        if ($techFilter && $techFilter !== 'all') {
+            if ($techFilter === 'featured') {
+                $query->where('featured', true);
+            } else {
+                $query->whereJsonContains('tech_stack', $techFilter);
+            }
+        }
+        
+        // Detect mobile users to adjust pagination slice dynamically
+        $userAgent = request()->header('User-Agent');
+        $isMobile = preg_match('/Mobile|Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i', $userAgent);
+        $perPage = $isMobile ? 2 : 4;
+        
+        $projects = $query->paginate($perPage)->withQueryString();
+        
         $experiences = Experience::orderBy('order', 'asc')->get();
         $certificates = Certificate::orderBy('order', 'asc')->get();
         
@@ -47,7 +71,8 @@ class PortfolioController extends Controller
 
         return view('pages.portfolio', compact(
             'projects', 'experiences', 'certificates', 'skills', 
-            'educations', 'organizations', 'awards', 'social_links'
+            'educations', 'organizations', 'awards', 'social_links',
+            'techFilters', 'techFilter', 'hasFeatured'
         ));
     }
 
@@ -58,7 +83,43 @@ class PortfolioController extends Controller
     {
         $project = Project::where('slug', $slug)
             ->where('status', 'published')
-            ->firstOrFail();
+            ->first();
+
+        if (!$project) {
+            return response()->view('errors.404', [], 404);
+        }
+
+        // Get Previous and Next Projects
+        $prevProject = Project::where('status', 'published')
+            ->where('order', '<', $project->order)
+            ->orderBy('order', 'desc')
+            ->first();
+
+        if (!$prevProject) {
+            $prevProject = Project::where('status', 'published')
+                ->where('id', '<', $project->id)
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
+        $nextProject = Project::where('status', 'published')
+            ->where('order', '>', $project->order)
+            ->orderBy('order', 'asc')
+            ->first();
+
+        if (!$nextProject) {
+            $nextProject = Project::where('status', 'published')
+                ->where('id', '>', $project->id)
+                ->orderBy('id', 'asc')
+                ->first();
+        }
+
+        // Get 2 random related projects (excluding current project)
+        $relatedProjects = Project::where('status', 'published')
+            ->where('id', '!=', $project->id)
+            ->inRandomOrder()
+            ->take(2)
+            ->get();
 
         // Track Project View Event
         try {
@@ -72,7 +133,7 @@ class PortfolioController extends Controller
             Log::warning('Analytics log project view failed: ' . $e->getMessage());
         }
 
-        return view('pages.project-detail', compact('project'));
+        return view('pages.project-detail', compact('project', 'prevProject', 'nextProject', 'relatedProjects'));
     }
 
     /**
@@ -81,6 +142,11 @@ class PortfolioController extends Controller
     public function downloadCv()
     {
         $resumePath = Setting::get('about_resume');
+
+        // Dynamically fix incorrect /image/upload/ path for PDFs
+        if ($resumePath && str_contains($resumePath, '/image/upload/') && str_ends_with(strtolower($resumePath), '.pdf')) {
+            $resumePath = str_replace('/image/upload/', '/raw/upload/', $resumePath);
+        }
         
         // Track CV Download Event
         try {
@@ -95,9 +161,22 @@ class PortfolioController extends Controller
         }
 
         if ($resumePath && (str_starts_with($resumePath, 'http://') || str_starts_with($resumePath, 'https://'))) {
-            return redirect()->away($resumePath);
+            try {
+                // Fetch the PDF from Cloudinary on the server side to stream it cleanly
+                $response = \Illuminate\Support\Facades\Http::timeout(10)->get($resumePath);
+                
+                if ($response->successful()) {
+                    return response($response->body(), 200, [
+                        'Content-Type' => 'application/pdf',
+                        'Content-Disposition' => 'attachment; filename="Resume-Ghoza-Himma.pdf"',
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Cloudinary CV download error: ' . $e->getMessage());
+            }
         }
 
+        // Local storage fallback
         $cleanPath = $resumePath ? str_replace('storage/', '', $resumePath) : null;
 
         if ($cleanPath && Storage::disk('public')->exists($cleanPath)) {
@@ -109,7 +188,7 @@ class PortfolioController extends Controller
             return response()->download(public_path('assets/files/resume.pdf'), 'Resume-Ghoza-Himma.pdf');
         }
 
-        return back()->with('error', 'Resume file not uploaded yet.');
+        return back()->with('error', 'The resume file is currently unavailable. Please try again later.');
     }
 
     /**

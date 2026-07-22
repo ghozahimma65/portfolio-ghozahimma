@@ -18,4 +18,14 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    /**
+     * Test that project detail page returns 404 when project not found.
+     */
+    public function test_project_detail_page_not_found_returns_404(): void
+    {
+        $response = $this->get('/project/non-existent-slug');
+
+        $response->assertStatus(404);
+    }
 }
