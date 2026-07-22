@@ -15,14 +15,14 @@ class CloudinaryService
      * @param string $folder
      * @return string
      */
-    public function upload($file, string $folder = 'portfolio'): string
+    public function upload($file, string $folder = 'portfolio', array $options = []): string
     {
         $filePath = $file instanceof UploadedFile ? $file->getRealPath() : $file;
         
         // Detect if the file is a PDF to use the correct 'raw' resource type on Cloudinary
         $resourceType = 'auto';
         if ($file instanceof UploadedFile) {
-            if ($file->getClientOriginalExtension() === 'pdf' || $file->getMimeType() === 'application/pdf') {
+            if (strtolower($file->getClientOriginalExtension()) === 'pdf' || $file->getMimeType() === 'application/pdf') {
                 $resourceType = 'raw';
             }
         } elseif (is_string($file)) {
@@ -31,12 +31,14 @@ class CloudinaryService
             }
         }
 
-        $options = [
+        $defaultOptions = [
             'folder' => $folder,
             'resource_type' => $resourceType,
         ];
 
-        $response = Cloudinary::uploadApi()->upload($filePath, $options);
+        $mergedOptions = array_merge($defaultOptions, $options);
+
+        $response = Cloudinary::uploadApi()->upload($filePath, $mergedOptions);
         return $response['secure_url'];
     }
 

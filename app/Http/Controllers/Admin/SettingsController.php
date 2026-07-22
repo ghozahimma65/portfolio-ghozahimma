@@ -101,7 +101,11 @@ class SettingsController extends Controller
             }
 
             // Store on Cloudinary
-            $path = $this->cloudinary->upload($request->file('about_resume'), 'settings');
+            $path = $this->cloudinary->upload($request->file('about_resume'), 'settings', [
+                'use_filename' => true,
+                'unique_filename' => false,
+                'overwrite' => true,
+            ]);
             Setting::set('about_resume', $path);
         }
 
