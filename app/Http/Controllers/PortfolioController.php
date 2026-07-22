@@ -153,8 +153,13 @@ class PortfolioController extends Controller
             Log::warning('Analytics log CV download failed: ' . $e->getMessage());
         }
 
-        if (\Illuminate\Support\Facades\Storage::disk('public')->exists('cv/resume.pdf')) {
-            return redirect()->away(asset('storage/cv/resume.pdf'));
+        $resumeUrl = Setting::get('about_resume');
+
+        if ($resumeUrl) {
+            if (str_starts_with($resumeUrl, 'http')) {
+                return redirect()->away($resumeUrl);
+            }
+            return redirect()->away(asset($resumeUrl));
         }
 
         // Fallback to local public file if exists
