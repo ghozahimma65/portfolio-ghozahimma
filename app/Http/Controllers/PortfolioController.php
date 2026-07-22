@@ -141,18 +141,11 @@ class PortfolioController extends Controller
      */
     public function downloadCv()
     {
-        $resumePath = Setting::get('about_resume');
-
-        // Dynamically fix incorrect /image/upload/ path for PDFs
-        if ($resumePath && str_contains($resumePath, '/image/upload/') && str_ends_with(strtolower($resumePath), '.pdf')) {
-            $resumePath = str_replace('/image/upload/', '/raw/upload/', $resumePath);
-        }
-        
         // Track CV Download Event
         try {
             AnalyticsLog::create([
                 'event_type' => 'cv_download',
-                'event_payload' => $resumePath ?: 'default_cv',
+                'event_payload' => 'cv/resume.pdf',
                 'ip_address' => request()->ip(),
                 'user_agent' => substr(request()->userAgent(), 0, 500),
             ]);
@@ -160,35 +153,16 @@ class PortfolioController extends Controller
             Log::warning('Analytics log CV download failed: ' . $e->getMessage());
         }
 
-        if ($resumePath && (str_starts_with($resumePath, 'http://') || str_starts_with($resumePath, 'https://'))) {
-            try {
-                // Fetch the PDF from Cloudinary on the server side to stream it cleanly
-                $response = \Illuminate\Support\Facades\Http::timeout(10)->get($resumePath);
-                
-                if ($response->successful()) {
-                    return response($response->body(), 200, [
-                        'Content-Type' => 'application/pdf',
-                        'Content-Disposition' => 'attachment; filename="Resume-Ghoza-Himma.pdf"',
-                    ]);
-                }
-            } catch (\Exception $e) {
-                Log::error('Cloudinary CV download error: ' . $e->getMessage());
-            }
-        }
-
-        // Local storage fallback
-        $cleanPath = $resumePath ? str_replace('storage/', '', $resumePath) : null;
-
-        if ($cleanPath && Storage::disk('public')->exists($cleanPath)) {
-            return Storage::disk('public')->download($cleanPath, 'Resume-Ghoza-Himma.pdf');
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists('cv/resume.pdf')) {
+            return redirect()->away(asset('storage/cv/resume.pdf'));
         }
 
         // Fallback to local public file if exists
         if (file_exists(public_path('assets/files/resume.pdf'))) {
-            return response()->download(public_path('assets/files/resume.pdf'), 'Resume-Ghoza-Himma.pdf');
+            return redirect()->away(asset('assets/files/resume.pdf'));
         }
 
-        return back()->with('error', 'The resume file is currently unavailable. Please try again later.');
+        return redirect()->back()->with('error', 'Resume is currently unavailable.');
     }
 
     /**
