@@ -88,25 +88,20 @@ class SettingsController extends Controller
             Setting::set('about_photo', $path);
         }
 
-        // Handle resume PDF upload using Cloudinary
+        // Handle resume PDF upload locally as static public asset
         if ($request->hasFile('about_resume')) {
-            $oldResume = Setting::get('about_resume');
-            if ($oldResume) {
-                $this->cloudinary->delete($oldResume);
+            $file = $request->file('about_resume');
+            $destinationPath = public_path('assets/resume');
+            $fileName = 'resume.pdf';
+
+            // Ensure destination directory exists
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
             }
 
-            // Delete existing local file if it exists to clean up
-            if (\Illuminate\Support\Facades\Storage::disk('public')->exists('cv/resume.pdf')) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete('cv/resume.pdf');
-            }
-
-            // Store on Cloudinary
-            $path = $this->cloudinary->upload($request->file('about_resume'), 'settings', [
-                'use_filename' => true,
-                'unique_filename' => false,
-                'overwrite' => true,
-            ]);
-            Setting::set('about_resume', $path);
+            // Move the file (overwrites if resume.pdf already exists)
+            $file->move($destinationPath, $fileName);
+            Setting::set('about_resume', 'assets/resume/resume.pdf');
         }
 
         // Save normal keys

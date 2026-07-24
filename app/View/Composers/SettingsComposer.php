@@ -19,9 +19,6 @@ class SettingsComposer
         }
 
         $aboutResume = Setting::get('about_resume');
-        if ($aboutResume && ! str_starts_with($aboutResume, 'http') && ! str_starts_with($aboutResume, 'storage/')) {
-            $aboutResume = ltrim(\Illuminate\Support\Facades\Storage::disk('public')->url($aboutResume), '/');
-        }
 
         $ogImage = Setting::get('seo_og_image', 'assets/images/profile-avatar.png');
         if ($ogImage && ! str_starts_with($ogImage, 'assets/') && ! str_starts_with($ogImage, 'http') && ! str_starts_with($ogImage, 'storage/')) {

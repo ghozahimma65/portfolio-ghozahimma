@@ -137,40 +137,6 @@ class PortfolioController extends Controller
     }
 
     /**
-     * Download the CV/Resume and log a cv_download hit.
-     */
-    public function downloadCv()
-    {
-        // Track CV Download Event
-        try {
-            AnalyticsLog::create([
-                'event_type' => 'cv_download',
-                'event_payload' => 'cv/resume.pdf',
-                'ip_address' => request()->ip(),
-                'user_agent' => substr(request()->userAgent(), 0, 500),
-            ]);
-        } catch (\Exception $e) {
-            Log::warning('Analytics log CV download failed: ' . $e->getMessage());
-        }
-
-        $resumeUrl = Setting::get('about_resume');
-
-        if ($resumeUrl) {
-            if (str_starts_with($resumeUrl, 'http')) {
-                return redirect()->away($resumeUrl);
-            }
-            return redirect()->away(asset($resumeUrl));
-        }
-
-        // Fallback to local public file if exists
-        if (file_exists(public_path('assets/files/resume.pdf'))) {
-            return redirect()->away(asset('assets/files/resume.pdf'));
-        }
-
-        return redirect()->back()->with('error', 'Resume is currently unavailable.');
-    }
-
-    /**
      * Display list of blog posts.
      */
     public function blogIndex()
@@ -194,5 +160,13 @@ class PortfolioController extends Controller
             ->firstOrFail();
 
         return view('pages.blog-detail', compact('post'));
+    }
+
+    /**
+     * Display the resume page with embedded PDF viewer.
+     */
+    public function resumeShow()
+    {
+        return view('pages.resume');
     }
 }

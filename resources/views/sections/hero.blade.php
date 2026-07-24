@@ -39,9 +39,15 @@
                     <a href="#contact" class="btn-custom btn-custom-secondary" aria-label="Contact Me">
                         Contact Me <i class="bi bi-chat-dots" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ route('portfolio.cv.download') }}" target="_blank" class="btn-custom btn-custom-secondary" aria-label="Download CV as PDF">
-                        Download CV <i class="bi bi-download" aria-hidden="true"></i>
-                    </a>
+                    @if(file_exists(public_path('assets/resume/resume.pdf')))
+                        <a href="{{ route('portfolio.resume') }}" class="btn-custom btn-custom-secondary" aria-label="View Resume">
+                            View Resume <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
+                        </a>
+                    @else
+                        <span class="btn-custom btn-custom-secondary disabled" aria-disabled="true" aria-label="Resume is currently unavailable">
+                            Resume is currently unavailable <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
+                        </span>
+                    @endif
                 </div>
 
                 <!-- Statistics row -->

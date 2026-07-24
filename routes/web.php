@@ -22,9 +22,9 @@ use App\Http\Controllers\SitemapController;
 
 // Public Website Routes
 Route::get('/', [PortfolioController::class, 'index'])->name('portfolio.index');
+Route::get('/resume', [PortfolioController::class, 'resumeShow'])->name('portfolio.resume');
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('/project/{slug}', [PortfolioController::class, 'projectShow'])->name('portfolio.project');
-Route::get('/cv/download', [PortfolioController::class, 'downloadCv'])->middleware('throttle:10,1')->name('portfolio.cv.download');
 Route::get('/blog', [PortfolioController::class, 'blogIndex'])->name('portfolio.blog.index');
 Route::get('/blog/{slug}', [PortfolioController::class, 'blogShow'])->name('portfolio.blog.show');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
