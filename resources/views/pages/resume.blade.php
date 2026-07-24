@@ -27,14 +27,27 @@
             <div class="col-lg-12">
                 <div class="card-custom p-2 p-md-3 shadow-lg" style="background-color: rgba(13, 17, 23, 0.45); backdrop-filter: blur(16px); border-radius: var(--radius-xl); border: 1px solid var(--border-color);">
                     @if(file_exists(public_path('assets/resume/resume.pdf')))
-                        <iframe 
-                            src="{{ asset('assets/resume/resume.pdf') }}#toolbar=0&navpanes=0&scrollbar=1" 
+                        <object 
+                            data="{{ asset('assets/resume/resume.pdf') }}#toolbar=0&navpanes=0&scrollbar=1" 
+                            type="application/pdf" 
                             width="100%" 
-                            style="height: 80vh; min-height: 600px; max-height: 950px; border: none; border-radius: var(--radius-lg); background-color: var(--bg-color);" 
-                            title="Backend Developer Resume PDF"
+                            style="height: 80vh; min-height: 600px; max-height: 950px; border-radius: var(--radius-lg); background-color: var(--bg-color);"
                         >
-                            <p>Your browser does not support embedded PDFs. <a href="{{ asset('assets/resume/resume.pdf') }}" target="_blank" rel="noopener noreferrer">Click here to view the PDF directly.</a></p>
-                        </iframe>
+                            <iframe 
+                                src="{{ asset('assets/resume/resume.pdf') }}#toolbar=0&navpanes=0&scrollbar=1" 
+                                width="100%" 
+                                style="height: 80vh; min-height: 600px; max-height: 950px; border: none; border-radius: var(--radius-lg); background-color: var(--bg-color);" 
+                                title="Backend Developer Resume PDF"
+                            >
+                                <div class="text-center py-5 text-secondary">
+                                    <i class="bi bi-file-earmark-pdf fs-1 text-primary d-block mb-3"></i>
+                                    <p class="mb-4">Your browser cannot render PDFs directly inside the page.</p>
+                                    <a href="{{ asset('assets/resume/resume.pdf') }}" target="_blank" rel="noopener noreferrer" class="btn-custom btn-custom-accent">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i> Open Resume in New Tab
+                                    </a>
+                                </div>
+                            </iframe>
+                        </object>
                     @else
                         <div class="text-center py-5 text-secondary">
                             <i class="bi bi-file-earmark-pdf fs-1 text-danger d-block mb-3"></i>
@@ -45,11 +58,16 @@
             </div>
         </div>
 
-        <!-- Back Button Below Viewer -->
-        <div class="d-flex justify-content-start mt-4" data-aos="fade-up" data-aos-delay="200">
+        <!-- Action Buttons Below Viewer -->
+        <div class="d-flex flex-wrap gap-2 gap-sm-3 mt-4" data-aos="fade-up" data-aos-delay="200">
             <a href="{{ url('/') }}" class="btn-custom btn-custom-secondary">
                 <i class="bi bi-arrow-left me-1"></i> Back to Portfolio
             </a>
+            @if(file_exists(public_path('assets/resume/resume.pdf')))
+                <a href="{{ asset('assets/resume/resume.pdf') }}" target="_blank" rel="noopener noreferrer" class="btn-custom btn-custom-accent">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Open Resume in New Tab
+                </a>
+            @endif
         </div>
     </div>
 </section>
